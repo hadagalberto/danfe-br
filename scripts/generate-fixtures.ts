@@ -707,6 +707,19 @@ GERADORES.push(() => {
   });
 });
 GERADORES.push(() => {
+  // 20 itens mistos ⇒ exatamente 2 páginas no A4 retrato (ver
+  // tests/danfe-retrato.test.ts, asserção de paginação).
+  const proc = notaSimples('muitos20', itensMistos('muitos20', 20));
+  writeFileSync(join(RAIZ_FIXTURES, 'nfe-muitos-itens-20.xml'), nfeProcToXml(proc), 'utf8');
+  registrar('nfe-muitos-itens-20.xml', 'NF-e produção com 20 itens mistos (2 páginas)', {
+    chave: proc.nfe.chave,
+    mod: 55,
+    tpAmb: 1,
+    cStat: 100,
+    itens: 20,
+  });
+});
+GERADORES.push(() => {
   const proc = notaSimples('muitos60', itensMistos('muitos60', 60));
   writeFileSync(join(RAIZ_FIXTURES, 'nfe-muitos-itens-60.xml'), nfeProcToXml(proc), 'utf8');
   registrar('nfe-muitos-itens-60.xml', 'NF-e produção com 60 itens mistos', {
@@ -715,6 +728,18 @@ GERADORES.push(() => {
     tpAmb: 1,
     cStat: 100,
     itens: 60,
+  });
+});
+GERADORES.push(() => {
+  // 95 itens mistos ⇒ exatamente 10 páginas no A4 retrato.
+  const proc = notaSimples('muitos95', itensMistos('muitos95', 95));
+  writeFileSync(join(RAIZ_FIXTURES, 'nfe-muitos-itens-95.xml'), nfeProcToXml(proc), 'utf8');
+  registrar('nfe-muitos-itens-95.xml', 'NF-e produção com 95 itens mistos (10 páginas)', {
+    chave: proc.nfe.chave,
+    mod: 55,
+    tpAmb: 1,
+    cStat: 100,
+    itens: 95,
   });
 });
 GERADORES.push(() => {

@@ -44,7 +44,7 @@ import {
 } from './formatacao';
 import { detectaSituacao, type Situacao } from './situacao';
 import { desenharCampo, desenharTexto, larguraTexto, quebrarLinhas } from './texto';
-import { digitoVerificadorChave } from '../validate/chave';
+import { digitoVerificadorChave, formatoChaveAcessoValido } from '../validate/chave';
 import type { OpcoesRenderDanfe } from './danfe-retrato';
 
 const ALTURA_LINHA_PRODUTO_CM = (FONTE_MINIMA.produto * 1.15) / PT_POR_CM;
@@ -808,9 +808,10 @@ export async function renderDanfePaisagem(
   opcoes: OpcoesRenderDanfe = {},
 ): Promise<Uint8Array> {
   const proc = normaliza(documento);
-  if (!/^\d{44}$/.test(proc.nfe.chave)) {
+  // NT 2025.001 — ver observação idêntica em `danfe-retrato.ts`.
+  if (!formatoChaveAcessoValido(proc.nfe.chave)) {
     throw new Error(
-      `Chave de acesso inválida: esperados 44 dígitos, recebido ${JSON.stringify(proc.nfe.chave)}.`,
+      `Chave de acesso inválida: esperados 44 caracteres no formato oficial, recebido ${JSON.stringify(proc.nfe.chave)}.`,
     );
   }
   const pdf = await PDFDocument.create();

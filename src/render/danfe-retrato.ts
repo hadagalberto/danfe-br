@@ -16,7 +16,7 @@
  *   http://www.nfe.fazenda.gov.br/Portal/perguntasFrequentes.aspx?tipoConteudo=7w14caCnJ6E%3D
  */
 import { PDFDocument, degrees, type PDFFont, type PDFPage } from 'pdf-lib';
-import { digitoVerificadorChave } from '../validate/chave';
+import { digitoVerificadorChave, formatoChaveAcessoValido } from '../validate/chave';
 import type { ProcEventoNFe } from '../model/evento';
 import type { Det, Icms, Ipi, NFe, NFeProc } from '../model/nfe';
 import {
@@ -987,9 +987,11 @@ export async function renderDanfe(
 ): Promise<Uint8Array> {
   const proc = normaliza(documento);
   if (opcoes.layout === 'paisagem') return renderDanfePaisagem(proc, opcoes);
-  if (!/^\d{44}$/.test(proc.nfe.chave)) {
+  // NT 2025.001: CNPJ alfanumérico coloca letras nas 12 posições da base do
+  // CNPJ; o DANFE deve ser impresso normalmente (Code 128 usa fallback B).
+  if (!formatoChaveAcessoValido(proc.nfe.chave)) {
     throw new Error(
-      `Chave de acesso inválida: esperados 44 dígitos, recebido ${JSON.stringify(proc.nfe.chave)}.`,
+      `Chave de acesso inválida: esperados 44 caracteres no formato oficial, recebido ${JSON.stringify(proc.nfe.chave)}.`,
     );
   }
   const alturaPt = PAGINA.alturaCm * PT_POR_CM;

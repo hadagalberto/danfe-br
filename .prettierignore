@@ -7,5 +7,7 @@ package-lock.json
 src/render/font-data.ts
 # Imagens douradas binárias (PNG) não são formatadas
 tests/golden
+# Gerado por `npm run fixtures` — a saída do gerador é a forma canônica
+tests/fixtures/manifest.json
 # SPEC do projeto (documento do mantenedor) — não reformatar
 SPEC.md

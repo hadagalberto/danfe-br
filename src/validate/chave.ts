@@ -65,6 +65,16 @@ export function digitoVerificadorChave(chave43: string): number | undefined {
  * Verifica se a chave de acesso tem 44 posições no formato oficial e DV
  * válido (MOC B23-10, cStat 253; regex da NT 2025.001, seção 5).
  */
+/**
+ * Apenas o formato oficial da chave (44 posições, letras permitidas nas 12
+ * posições da base do CNPJ conforme NT 2025.001) — sem verificar o DV.
+ * Usado pelos renderizadores, que devem imprimir o DANFE de documentos com
+ * CNPJ alfanumérico (o DV é checado pela validação, não pela impressão).
+ */
+export function formatoChaveAcessoValido(chave: string): boolean {
+  return RE_CHAVE_COMPLETA.test(chave);
+}
+
 export function chaveAcessoValida(chave: string): boolean {
   if (!RE_CHAVE_COMPLETA.test(chave)) return false;
   const dvInformado = Number(chave.slice(43));

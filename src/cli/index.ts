@@ -12,6 +12,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname, join, resolve } from 'node:path';
+import { PDFDocument } from 'pdf-lib';
 import type { ResultadoValidacaoNFe } from '../validate/validate';
 import { parseNFe } from '../parse/nfe';
 import { validateNFe } from '../validate/validate';
@@ -186,13 +187,54 @@ export function analisaArgumentos(argv: readonly string[]): AnaliseArgumentos {
   return { ok: true, opcoes };
 }
 
+/**
+ * PNG válido na estrutura mínima exigida pelo `embedPng` do pdf-lib:
+ * assinatura de 8 bytes (RFC 2083 / ISO/IEC 15948) seguida do comprimento
+ * e do tipo do primeiro chunk, que deve ser `IHDR` (13 bytes).
+ */
 function ehPng(bytes: Uint8Array): boolean {
   const assinatura = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
-  return assinatura.every((byte, i) => bytes[i] === byte);
+  if (!assinatura.every((byte, i) => bytes[i] === byte)) return false;
+  return (
+    bytes[8] === 0x00 &&
+    bytes[9] === 0x00 &&
+    bytes[10] === 0x00 &&
+    bytes[11] === 0x0d &&
+    bytes[12] === 0x49 &&
+    bytes[13] === 0x48 &&
+    bytes[14] === 0x44 &&
+    bytes[15] === 0x52
+  );
 }
 
+/** JPEG válido na estrutura mínima (ITU-T T.81): SOI + marcador + EOI. */
 function ehJpeg(bytes: Uint8Array): boolean {
-  return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  const n = bytes.length;
+  return (
+    n >= 4 &&
+    bytes[0] === 0xff &&
+    bytes[1] === 0xd8 &&
+    bytes[2] === 0xff &&
+    bytes[n - 2] === 0xff &&
+    bytes[n - 1] === 0xd9
+  );
+}
+
+/**
+ * Valida o logotipo com o mesmo decodificador usado na renderização: assinatura
+ * de arquivo + decodificação real pelo pdf-lib. Assim um PNG/JPEG truncado é erro de uso
+ * (código 2) e não uma falha de renderização avançada (código 1).
+ */
+async function logotipoDecodificavel(bytes: Uint8Array): Promise<boolean> {
+  if (!ehPng(bytes) && !ehJpeg(bytes)) return false;
+  try {
+    const pdf = await PDFDocument.create();
+    if (ehPng(bytes)) await pdf.embedPng(bytes);
+    else await pdf.embedJpg(bytes);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function mensagemErro(erro: unknown): string {
@@ -265,8 +307,10 @@ export async function executaCli(
       io.erro(`danfe: não foi possível ler o logotipo: ${mensagemErro(erro)}\n`);
       return { codigo: 2, pdfs: [], relatorio: { arquivos: [] } };
     }
-    if (!ehPng(logo) && !ehJpeg(logo)) {
-      io.erro('danfe: logotipo deve ser PNG ou JPEG (assinatura de arquivo inválida)\n');
+    if (!(await logotipoDecodificavel(logo))) {
+      io.erro(
+        'danfe: logotipo deve ser PNG ou JPEG válido e não corrompido (assinatura/estrutura inválida)\n',
+      );
       return { codigo: 2, pdfs: [], relatorio: { arquivos: [] } };
     }
   }

@@ -10,12 +10,14 @@ renderiza os documentos auxiliares oficiais em PDF: **DANFE** (retrato e
 paisagem) e **DANFE NFC-e** (80 mm e 58 mm, com QR Code), além de saída
 **ESC/POS** para impressoras térmicas.
 
-> Status: **Marcos 1 a 5 concluídos** — modelo tipado, parser, validação,
-> fábrica de fixtures, códigos de barras (Code 128 / QR Code), verificação
-> da assinatura XMLDSig do `infNFe`, **DANFE retrato e paisagem**, **DANFE
-> NFC-e 80/58 mm**, **ESC/POS**, composição de eventos (cancelamento e CC-e)
-> e a **CLI `danfe`** (arquivo único, lote, `--layout`, `--logo`, `--json`,
-> `--validate`). O build ESM também é verificado em um contexto de navegador.
+> Status: **Marcos 1 a 6 concluídos** — modelo tipado, parser, validação
+> (inclusive **hook opcional de XSD**), fábrica de fixtures, códigos de barras
+> (Code 128 / QR Code), verificação da assinatura XMLDSig do `infNFe`,
+> **DANFE retrato e paisagem**, **DANFE NFC-e 80/58 mm**, **ESC/POS**,
+> composição de eventos (cancelamento e CC-e) e a **CLI `danfe`** (arquivo
+> único, lote, `--layout`, `--logo`, `--json`, `--validate`). O build ESM também
+> é verificado em um contexto de navegador. O marco 6 auditou cada item da
+> SPEC e registrou o resultado em [`docs/SPEC-CHECKLIST.md`](docs/SPEC-CHECKLIST.md).
 
 ## Galeria
 
@@ -37,12 +39,18 @@ Imagens geradas das rasterizações douradas dos testes (`npm run docs:images`):
 
 ## Instalação
 
+O pacote **não é publicado no npm** (determinação da SPEC). Para usar localmente:
+
 ```bash
-npm install danfe-br
+git clone https://github.com/hadagalberto/danfe-br
+cd danfe-br
+npm install
+npm run build
 ```
 
 Requer **Node.js ≥ 20**. Funciona em Node e no navegador (TypeScript puro,
-sem dependências nativas). Build dual: ESM + CJS.
+sem dependências nativas). Build dual: ESM + CJS. Após o build, o binário fica
+em `dist/cli.js` (use `node dist/cli.js ...` nos exemplos abaixo).
 
 ## Uso
 
@@ -96,6 +104,35 @@ O que é validado neste marco (cada item cita a fonte oficial no código):
 | CST 51: vICMS = vICMSOp − vICMSDif                      | MOC regra N17-10, cStat 353                             |
 | Situação do protocolo (100/150/110/301-303)             | MOC 7.0 — Anexo I, seções 4.4.1/4.4.3                   |
 | Homologação → “SEM VALOR FISCAL”                        | MOC 7.0 — Anexo II                                      |
+
+### Hook opcional de validação XSD
+
+O núcleo **não** exige libxml nativo (a SPEC limita as dependências de runtime
+a `pdf-lib`, um parser XML puro e os códigos de barras próprios). Em vez disso,
+o integrador injeta o validador XSD que quiser (libxml, Xerces, serviço da
+SEFAZ etc.). Os XSDs oficiais PL 009q / PL 010b já estão vendados em
+[`schemas/`](schemas/README.md) e `detectaEsquemaXsd` informa qual aplicar:
+
+```ts
+import { validaNFeComXsd, detectaEsquemaXsd } from 'danfe-br';
+
+detectaEsquemaXsd(xml)?.arquivo;
+// 'schemas/PL_009q_NT2025_001_v1.00/procNFe_v4.00.xsd'
+
+const resultado = await validaNFeComXsd(xml, async (conteudo, esquema) => {
+  // `esquema.arquivo` aponta o XSD oficial; chame seu validador aqui.
+  const erros = await meuValidadorXsd(conteudo, esquema.arquivo);
+  return { valido: erros.length === 0, problemas: erros };
+});
+
+resultado.valido; // estrutura (DV, CNPJ/CPF, totais, protocolo) **e** XSD
+resultado.xsd.problemas; // problemas do XSD normalizados (código XSD_*)
+```
+
+O hook pode ser síncrono ou assíncrono. Falhas do validador são reportadas
+como problemas `XSD_HOOK_FALHA` — nunca lançadas. Fontes: Portal NF-e SVRS
+<https://dfe-portal.svrs.rs.gov.br/NFe/Documentos> (MOC 7.00 e pacotes de
+schemas) e `schemas/README.md`.
 
 ### Fábrica de fixtures (`danfe-br/fixtures`)
 
@@ -217,22 +254,52 @@ A NFC-e segue o
 (divisões I–IX, margens de 2 mm, QR de 25 × 25 mm com nível M/UTF-8) e o
 [Manual de Especificações Técnicas do DANFE NFC-e e QR Code v5.0](https://dfe-portal.svrs.rs.gov.br/Nfce/Documentos),
 com as URLs de download oficiais citadas em `src/render/nfce-conteudo.ts`. O
-ESC/POS usa os comandos Epson documentados em `src/render/escppos.ts`; a
-sequência de bytes é verificada com vetores exatos nos testes.
+QR Code é codificado **exatamente** a partir do campo `qrCode` do XML — sem
+recalcular parâmetros —, portanto aceita o leiaute versão 1/2 e a **versão 3**
+definida pela [NT 2025.001 v1.01 — “NFC-e: Leiaute do QR-Code versão 3”](https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=trSXReoZPuY=)
+(26/06/2025; ato técnico conjunto 2/2026). Há teste de ida e volta com um
+payload versão 3. O ESC/POS usa os comandos Epson documentados em
+`src/render/escppos.ts`; a sequência de bytes é verificada com vetores exatos
+nos testes.
 
 ### CLI `danfe` (marco 5)
 
 O pacote instala o binário `danfe`:
 
+Exemplos **executados e verificados** neste repositório (saídas em `.tmp/`):
+
 ```bash
-danfe nota.xml -o nota.pdf                         # arquivo único
-danfe nota.xml --layout paisagem --logo logo.png -o nota.pdf
-danfe nfce.xml --papel 58 -o cupom.pdf             # NFC-e detectada pelo modelo 65
-danfe nota.xml --validate                          # só valida; exit 0/1
-danfe notas/ -o pdfs/                              # lote: todos os .xml do diretório
-danfe nota.xml --json                              # relatório estruturado no stdout
-danfe --help
+node dist/cli.js tests/fixtures/nfe-cst-00.xml -o .tmp/nota.pdf
+# exit 0 → .tmp/nota.pdf (%PDF-)
+
+node dist/cli.js tests/fixtures/nfe-cst-00.xml \
+  --layout paisagem --logo docs/images/danfe-retrato.png -o .tmp/nota-paisagem.pdf
+# exit 0 → PDF A4 paisagem com logotipo
+
+node dist/cli.js tests/fixtures/nfce-anonima.xml --papel 58 -o .tmp/cupom.pdf
+# exit 0 → DANFE NFC-e em papel térmico de 58 mm (modelo 65 detectado)
+
+node dist/cli.js tests/fixtures/nfe-cst-00.xml --validate
+# exit 0, sem saída: nota autorizada e consistente
+
+mkdir -p .tmp/notas && cp tests/fixtures/nfe-cst-00.xml tests/fixtures/nfe-duplicatas.xml .tmp/notas/
+node dist/cli.js .tmp/notas -o .tmp/pdfs/
+# exit 0 → .tmp/pdfs/nfe-cst-00.pdf e .tmp/pdfs/nfe-duplicatas.pdf
+
+node dist/cli.js tests/fixtures/nfe-cst-00.xml --validate --json
+# exit 0 → JSON com chave, modelo, número, série, emitente e validação
+
+node dist/cli.js --help          # exit 0
+node dist/cli.js --version       # exit 0 → danfe-br 0.1.0
 ```
+
+`--json` imprime, entre outros campos:
+`"chave": "35260110562655620245550280000217691341262140"`,
+`"modelo": 55`, `"emitente": "Indústria Vale Verde Ltda"` e
+`"validacao": { "valido": true, ... }`. Combinado com `--validate`, nenhum
+PDF é gravado. Para ver um erro real de validação, altere o DV da chave em
+uma cópia do XML e rode `--validate`: o resultado é `exit 1` com
+`erro CHAVE_DV [B23-10] (cStat 253): Dígito verificador ... inválido`.
 
 - `--layout` aceita `retrato` (padrão), `paisagem` e `nfce`; sem ele, notas
   modelo 65 usam NFC-e automaticamente. `--papel` escolhe 80 mm (padrão) ou
@@ -294,11 +361,13 @@ npm run golden     # regenera as imagens douradas em tests/golden/
 npm run docs:images # regenera docs/images/ a partir de tests/golden/
 ```
 
-- Testes: **vitest** — 277 testes, incluindo o corpus com 45 XMLs em
-  `tests/fixtures/` (uma nota por CST/CSOSN, 10/60/120 itens, duplicatas,
+- Testes: **vitest** — 313 testes, incluindo o corpus com 47 XMLs em
+  `tests/fixtures/` (uma nota por CST/CSOSN, 10/20/60/95/120 itens —
+  paginação de 1/2/6/10/12 páginas, duplicatas,
   transporte, homologação, denegada, sem protocolo, CNPJ alfanumérico, DIFAL,
   ISSQN conjugado, IBS/CBS, 3 NFC-e's, cancelamento e CC-e), 15 testes da CLI e
-  3 do build ESM em happy-dom.
+  3 do build ESM em happy-dom, 13 do hook XSD, 21 de endurecimento e 2 novos
+  casos dinâmicos do corpus (marco 6).
 - Finais de linha: **LF** (`.gitattributes`).
 - CI: GitHub Actions em ubuntu/windows/macos × Node 20/22/24.
 
@@ -312,7 +381,9 @@ npm run docs:images # regenera docs/images/ a partir de tests/golden/
   Especificações Técnicas do DANFE NFC-e e QR Code v5.0.
 - [Portal Nacional da NF-e](https://www.nfe.fazenda.gov.br) e
   [Portal DFe da SVRS](https://dfe-portal.svrs.rs.gov.br/NFe/Documentos)
-  (schemas XSD PL_009q e notas técnicas 2024.002, 2025.001 etc.).
+  (schemas XSD PL_009q/PL_010b e notas técnicas 2024.002, 2025.001 etc.).
+- [NT 2025.001 v1.01 — NFC-e: Leiaute do QR-Code versão 3](https://www.nfe.fazenda.gov.br/portal/exibirArquivo.aspx?conteudo=trSXReoZPuY=)
+  (26/06/2025): `https://endereco-consulta-QRCode?p=|<chave>|...`.
 - XSDs oficiais vendados em [`schemas/`](schemas/README.md) com fonte e data.
 
 ## Licença

@@ -5,6 +5,30 @@ e [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+### Adicionado — Marco 6: auditoria da SPEC e endurecimento
+
+- **Hook opcional de validação XSD** (`validaXsd`, `validaNFeComXsd`,
+  `detectaEsquemaXsd`, `ESQUEMAS_XSD`): o núcleo continua sem libxml nativo; o
+  integrador injeta seu validador (síncrono ou assíncrono) e recebe problemas
+  normalizados (`XSD_*`) mesclados ao relatório estrutural. Os XSDs oficiais
+  vendados em `schemas/` e o portal SVRS são citados no código e na docs.
+- **Correção**: DANFE retrato e paisagem agora imprimem documentos com **CNPJ
+  alfanumérico** (NT 2025.001) — antes rejeitavam a chave por conter letras.
+  A validação de formato usa a regex oficial (`[0-9]{6}[A-Z0-9]{12}[0-9]{26}`).
+- **Endurecimento**: `validateNFe` nunca lança mesmo com modelo incompleto
+  (problema `VALIDACAO_INTERNA`); `encodeQrCode` rejeita nível de correção
+  inválido com erro claro; a CLI valida PNG/JPEG com o próprio decodificador
+  do pdf-lib e devolve código 2 para arquivos corrompidos.
+- **Cobertura**: QR Code versão 3 (NT 2025.001 v1.01), BOM/entidades/
+  aninhamento profundo, caminhos com espaços e separadores do Windows, lote com
+  saída inválida — 36 novos testes de regressão (`tests/xsd.test.ts` e
+  `tests/hardening.test.ts`). O corpus passa de 45 para **47 XMLs**, com
+  fixtures de exatamente 2 e 10 páginas (SPEC: paginação 1/2/10).
+- **CI/Qualidade**: `npm run lint` usa `--max-warnings 0` (warnings = erros).
+- **Documentação**: `docs/SPEC-CHECKLIST.md` com o levantamento linha a linha
+  da SPEC e o status verificado de cada requisito; READMEs pt-BR/en com exemplos
+  de CLI executados e fontes oficiais atualizadas.
+
 ### Adicionado — Marco 5: CLI, smoke test de navegador e documentação
 
 - **Binário `danfe`** (`bin` do pacote, build `dist/cli.js`): `danfe nota.xml -o

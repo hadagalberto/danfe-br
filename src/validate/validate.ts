@@ -50,6 +50,39 @@ function temCodigo(problemas: ProblemaValidacao[], prefixo: string): boolean {
  * Não lança exceções — problemas são reportados no resultado.
  */
 export function validateNFe(proc: NFeProc): ResultadoValidacaoNFe {
+  try {
+    return validaNFeInterno(proc);
+  } catch (erro) {
+    // Contrato da SPEC: validação reporta, nunca lança. Um modelo vindo de
+    // integração em JS pode estar incompleto (campos obrigatórios ausentes);
+    // transformamos a falha em problema estruturado em vez de propagar.
+    const mensagem = erro instanceof Error ? erro.message : String(erro);
+    const problema: ProblemaValidacao = {
+      severity: 'erro',
+      code: 'VALIDACAO_INTERNA',
+      campo: 'NFeProc',
+      message: `Não foi possível validar o modelo informado: ${mensagem}`,
+    };
+    return {
+      valido: false,
+      problemas: [problema],
+      erros: [problema],
+      avisos: [],
+      situacaoProtocolo: {
+        temProtocolo: false,
+        autorizada: false,
+        denegada: false,
+        homologacao: false,
+        semValorFiscal: false,
+      },
+      chaveValida: false,
+      documentosValidos: false,
+      totaisValidos: false,
+    };
+  }
+}
+
+function validaNFeInterno(proc: NFeProc): ResultadoValidacaoNFe {
   const nfe = proc.nfe;
 
   const problemasChave = validaChaveNFe(nfe);

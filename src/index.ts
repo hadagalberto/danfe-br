@@ -23,10 +23,27 @@ export { validateNFe, type ResultadoValidacaoNFe } from './validate/validate';
 export type { ProblemaValidacao, SeveridadeValidacao } from './model/comum';
 export type { SituacaoProtocolo } from './validate/protocolo';
 export { analisaProtocolo, CSTAT_AUTORIZADO, CSTAT_DENEGADO } from './validate/protocolo';
-export { chaveAcessoValida, digitoVerificadorChave, montaChaveDeAcesso } from './validate/chave';
+export {
+  chaveAcessoValida,
+  digitoVerificadorChave,
+  montaChaveDeAcesso,
+  formatoChaveAcessoValido,
+} from './validate/chave';
 export { cnpjValido, cpfValido } from './validate/documentos';
 export { validaChaveNFe, chaveEsperada, aammDeDhEmi } from './validate/chave';
 export { validaDocumentos, calculaDvCnpj, calculaDvCpf } from './validate/documentos';
+
+// Hook opcional de validação XSD (SPEC — sem libxml nativo no núcleo)
+export { ESQUEMAS_XSD, detectaEsquemaXsd, validaXsd, validaNFeComXsd } from './validate/xsd';
+export type {
+  EsquemaXsd,
+  RaizDocumentoXsd,
+  ProblemaValidadorXsd,
+  ResultadoValidadorXsd,
+  ValidadorXsd,
+  ResultadoValidacaoXsd,
+  ResultadoValidacaoComXsd,
+} from './validate/xsd';
 export {
   validaTotais,
   validaItens,

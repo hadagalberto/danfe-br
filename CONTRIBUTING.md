@@ -63,9 +63,15 @@ node dist/cli.js tests/fixtures/nfe-cst-00.xml --validate
    se precisar, **busque a fonte** antes de escrever o código. Os XSDs
    oficiais estão em `schemas/`.
 3. **Não enfraqueça testes para fazê-los passar** — corrija a causa raiz.
-4. **Finais de linha LF** em tudo (`.gitattributes` cuida disso; verifique
+4. **Validação XSD é um hook, não uma dependência nativa**: use
+   `validaXsd`/`validaNFeComXsd` (`src/validate/xsd.ts`) e mantenha os XSDs em
+   `schemas/` com fonte e versão em `schemas/README.md`. Nunca adicione libxml
+   ao núcleo — a SPEC limita as dependências de runtime.
+5. **Mudou um requisito da SPEC?** Atualize `docs/SPEC-CHECKLIST.md` com o
+   status e a evidência (comando/teste executado).
+6. **Finais de linha LF** em tudo (`.gitattributes` cuida disso; verifique
    `git diff --check`).
-5. **Não publique** o pacote no npm nem faça push de releases — a SPEC
+7. **Não publique** o pacote no npm nem faça push de releases — a SPEC
    proíbe publicação.
 
 ### Mensagens de commit

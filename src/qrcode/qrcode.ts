@@ -83,6 +83,13 @@ export function encodeQrCode(dados: string | Uint8Array, opcoes?: OpcoesQrCode):
   const versaoMaxima = opcoes?.versaoMaxima ?? 40;
   const mascaraForcada = opcoes?.mascara;
 
+  if (nivel !== 'L' && nivel !== 'M' && nivel !== 'Q' && nivel !== 'H') {
+    // Entrada vinda de integrações em JS (sem typecheck) pode trazer nível
+    // inválido; falhar com mensagem clara em vez de TypeError opaco em tabelas.
+    throw new RangeError(
+      `encodeQrCode: nível de correção inválido ${String(nivel)} (use L, M, Q ou H).`,
+    );
+  }
   if (versaoMinima < 1 || versaoMinima > 40 || versaoMaxima < 1 || versaoMaxima > 40) {
     throw new RangeError('encodeQrCode: versão fora do intervalo 1–40 do padrão.');
   }

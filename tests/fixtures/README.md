@@ -19,7 +19,7 @@ reproduz estes arquivos byte a byte — `tests/corpus.test.ts` verifica isso.
 | CST 00/02/10/15/20/30/40/41/50/51/53/60/61/70/90                | `nfe-cst-*.xml`                              |
 | ICMSPart (10) e ICMSST (60)                                     | `nfe-icms-part-10.xml`, `nfe-icms-st-60.xml` |
 | CSOSN 101/102/103/201/202/203/300/400/500/900                   | `nfe-csosn-*.xml`                            |
-| Muitos itens (10/60/120)                                        | `nfe-muitos-itens-*.xml`                     |
+| Muitos itens (10/20/60/95/120 → 1/2/6/10/12 páginas)            | `nfe-muitos-itens-*.xml`                     |
 | Fatura + 3 duplicatas                                           | `nfe-duplicatas.xml`                         |
 | Transporte completo                                             | `nfe-transporte.xml`                         |
 | Homologação (tpAmb = 2)                                         | `nfe-homologacao.xml`                        |

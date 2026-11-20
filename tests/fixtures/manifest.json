@@ -377,7 +377,9 @@
       "cStat": 110,
       "itens": 1,
       "valido": false,
-      "problemas": ["USO_DENEGADO"]
+      "problemas": [
+        "USO_DENEGADO"
+      ]
     },
     {
       "arquivo": "nfe-difal.xml",
@@ -422,7 +424,9 @@
       "cStat": 100,
       "itens": 1,
       "valido": true,
-      "problemas": ["AMBIENTE_HOMOLOGACAO"]
+      "problemas": [
+        "AMBIENTE_HOMOLOGACAO"
+      ]
     },
     {
       "arquivo": "nfe-icms-part-10.xml",
@@ -482,6 +486,17 @@
       "valido": true
     },
     {
+      "arquivo": "nfe-muitos-itens-20.xml",
+      "descricao": "NF-e produção com 20 itens mistos (2 páginas)",
+      "tipo": "nfeProc",
+      "chave": "35260411828894376331550970007236181373321814",
+      "mod": 55,
+      "tpAmb": 1,
+      "cStat": 100,
+      "itens": 20,
+      "valido": true
+    },
+    {
       "arquivo": "nfe-muitos-itens-60.xml",
       "descricao": "NF-e produção com 60 itens mistos",
       "tipo": "nfeProc",
@@ -490,6 +505,17 @@
       "tpAmb": 1,
       "cStat": 100,
       "itens": 60,
+      "valido": true
+    },
+    {
+      "arquivo": "nfe-muitos-itens-95.xml",
+      "descricao": "NF-e produção com 95 itens mistos (10 páginas)",
+      "tipo": "nfeProc",
+      "chave": "35261210302878440372550610004631381751357010",
+      "mod": 55,
+      "tpAmb": 1,
+      "cStat": 100,
+      "itens": 95,
       "valido": true
     },
     {
@@ -513,7 +539,9 @@
       "cStat": null,
       "itens": 1,
       "valido": false,
-      "problemas": ["SEM_PROTOCOLO"]
+      "problemas": [
+        "SEM_PROTOCOLO"
+      ]
     },
     {
       "arquivo": "nfe-transporte.xml",
