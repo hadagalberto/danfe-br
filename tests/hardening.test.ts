@@ -76,12 +76,16 @@ describe('validação reporta, nunca lança', () => {
   });
 });
 
-describe('corpus de paginação (SPEC — 1, 2 e 10 páginas)', () => {
-  it('renderiza exatamente 1, 2 e 10 páginas nos fixtures correspondentes', async () => {
+describe('corpus de paginação (SPEC — 1, 2 e 8 páginas)', () => {
+  it('renderiza exatamente 1, 2 e 8 páginas nos fixtures correspondentes', async () => {
     const casos = [
       ['nfe-muitos-itens-10.xml', 1],
       ['nfe-muitos-itens-20.xml', 2],
-      ['nfe-muitos-itens-95.xml', 10],
+      // Corrigido (review 2026-11-20, item 7): com o NCM de 8 dígitos em uma
+      // única linha, cada item ocupa a altura mínima de 0,5 cm e cabem 12 por
+      // folha (área 6,22 cm) → ceil(95/12) = 8 folhas; antes eram 10 por causa
+      // da quebra indevida do NCM em duas linhas.
+      ['nfe-muitos-itens-95.xml', 8],
     ] as const;
     for (const [arquivo, paginas] of casos) {
       const pdf = await renderDanfe(parseNFe(conteudo(arquivo)));

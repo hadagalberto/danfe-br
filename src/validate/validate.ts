@@ -87,6 +87,7 @@ function validaNFeInterno(proc: NFeProc): ResultadoValidacaoNFe {
 
   const problemasChave = validaChaveNFe(nfe);
   const problemasDocs = validaDocumentos({
+    modelo: nfe.ide?.mod,
     emitCnpj: nfe.emit.cnpj,
     emitCpf: nfe.emit.cpf,
     destInformado: nfe.dest !== undefined,
@@ -119,7 +120,8 @@ function validaNFeInterno(proc: NFeProc): ResultadoValidacaoNFe {
       !temCodigo(problemasDocs, 'CNPJ') &&
       !temCodigo(problemasDocs, 'CPF') &&
       !temCodigo(problemasDocs, 'EMITENTE_SEM_DOCUMENTO') &&
-      !temCodigo(problemasDocs, 'DESTINATARIO_SEM_DOCUMENTO'),
+      !temCodigo(problemasDocs, 'DESTINATARIO_SEM_DOCUMENTO') &&
+      !temCodigo(problemasDocs, 'DESTINATARIO_OBRIGATORIO'),
     totaisValidos: !temCodigo(problemasItens, 'ITEM_') && !temCodigo(problemasTotais, 'TOTAL_'),
   };
 }

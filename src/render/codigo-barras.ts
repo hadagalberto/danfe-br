@@ -68,7 +68,13 @@ export function desenharCode128(
 ): void {
   const simbolo = encodeCode128(dados);
   const modulosTotais = simbolo.larguraModulos + 2 * ZONA_SILENCIO_CODE128;
-  const moduloCm = Math.min(caixa.largura / modulosTotais, 0.06);
+  // A moldura do quadro (0,6 pt) é desenhada sobre a borda da caixa. Sem
+  // reservar esse espaço, a zona de silêncio efetiva cai para ~9,5 módulos e
+  // leitores (ZXing) falham no recorte completo — ISO 15417 exige ≥ 10X.
+  const espessuraBordaCm = 0.6 / PT_POR_CM;
+  const reservaCm = espessuraBordaCm + 0.02;
+  const larguraUtilCm = Math.max(0.1, caixa.largura - 2 * reservaCm);
+  const moduloCm = Math.min(larguraUtilCm / modulosTotais, 0.06);
   const margemCm = (caixa.largura - modulosTotais * moduloCm) / 2;
   const alturaBarraCm = Math.min(caixa.altura - 0.06, 1.3);
   const topoCm = caixa.y + (caixa.altura - alturaBarraCm) / 2;

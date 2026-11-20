@@ -50,6 +50,21 @@ export function cnpjCpf(documento: string | undefined): string {
   return documento ?? '';
 }
 
+/** CEP brasileiro: `00000-000` (8 dígitos). */
+export function cep(valor: string | undefined): string {
+  const d = soDigitos(valor);
+  return d.length === 8 ? `${d.slice(0, 5)}-${d.slice(5)}` : (valor ?? '');
+}
+
+/** Telefone: `(11) 3333-4444` (10 dígitos) ou `(11) 93333-4444` (11). */
+export function fone(valor: string | undefined): string {
+  const d = soDigitos(valor);
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 8) return `${d.slice(0, 4)}-${d.slice(4)}`;
+  return valor ?? '';
+}
+
 /** Chave de acesso: 11 blocos de 4 dígitos (MOC §3.1.1). */
 export function mascaraChave(chave: string): string {
   const blocos: string[] = [];
@@ -78,10 +93,18 @@ export function fretePorConta(modFrete: number): string {
   return FRETE_POR_CONTA[modFrete] ?? '';
 }
 
-/** CST do item: usa o CST do ICMS ou, no Simples Nacional, o CSOSN. */
-export function cstItem(icms: { cst?: string; csosn?: string; grupo: string } | undefined): string {
+/**
+ * CST do item: MOC Anexo I exige **orig + CST** (ou **orig + CSOSN** no
+ * Simples Nacional), por exemplo origem 0/CST 00 → "000" e origem 0/CSOSN
+ * 102 → "0102". O dígito da origem (0–6) não pode ser descartado.
+ */
+export function cstItem(
+  icms: { orig?: number | string; cst?: string; csosn?: string; grupo: string } | undefined,
+): string {
   if (!icms) return '';
-  return icms.cst ?? icms.csosn ?? icms.grupo.replace(/^ICMS/, '').slice(0, 2);
+  const origem = icms.orig ?? 0;
+  const codigo = icms.cst ?? icms.csosn ?? icms.grupo.replace(/^ICMS/, '').slice(0, 2);
+  return `${origem}${codigo}`;
 }
 
 /** Alíquota do ICMS do item, quando informada. */

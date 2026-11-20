@@ -30,10 +30,12 @@ import { desenharCode128, desenharLinha, desenharQuadro } from './codigo-barras'
 import { incorporaFontes, type FontesDanfe } from './font';
 import {
   aliquotaIcmsItem,
+  cep,
   cnpjCpf,
   cstItem,
   data,
   diaEmissao,
+  fone,
   fretePorConta,
   hora,
   inteiro,
@@ -405,9 +407,11 @@ async function desenhaCabecalho(
   }
   const ender = nfe.emit.enderEmit;
   const enderecoPartes = [
+    // MOC §3.7.6: razão social no quadro, fantasia só como linha extra.
+    nfe.emit.xFant ? `Fantasia: ${nfe.emit.xFant}` : '',
     `${ender.xLgr}, ${ender.nro}${ender.xCpl ? `, ${ender.xCpl}` : ''}`,
-    `${ender.xBairro} - ${ender.xMun}/${ender.uf} - CEP ${ender.cep ?? ''}`,
-    ender.fone ? `Fone: ${ender.fone}` : '',
+    `${ender.xBairro} - ${ender.xMun}/${ender.uf} - CEP ${cep(ender.cep)}`,
+    ender.fone ? `Fone: ${fone(ender.fone)}` : '',
   ].filter((parte) => parte.length > 0);
   desenharTexto(
     pagina,
@@ -417,7 +421,7 @@ async function desenhaCabecalho(
       largura: larguraConteudo,
       altura: 0.7,
     },
-    nfe.emit.xFant ?? nfe.emit.xNome,
+    nfe.emit.xNome,
     ALTURA_PAGINA_PAISAGEM_PT,
     { fonte: fontes.negrito, tamanho: FONTE_MINIMA.emitenteNome, maxLinhas: 1, margemCm: 0.02 },
   );
@@ -517,6 +521,31 @@ async function desenhaCabecalho(
         { fonte: fontes.negrito, tamanho: 7, alinhamento: 'centro', margemCm: 0, maxLinhas: 1 },
       );
     }
+  } else {
+    // MOC §3.9.1: Campo 1 com a consulta de autenticidade e Campo 2 com o
+    // protocolo (nProt + data/hora do recebimento).
+    desenharQuadro(pagina, CABECALHO_PAISAGEM.dadosBarras, ALTURA_PAGINA_PAISAGEM_PT, {
+      espessura: 0.5,
+    });
+    desenharTexto(
+      pagina,
+      CABECALHO_PAISAGEM.dadosBarras,
+      `${TEXTO.autenticidade1}\n${TEXTO.autenticidade2}`,
+      ALTURA_PAGINA_PAISAGEM_PT,
+      {
+        fonte: fontes.regular,
+        tamanho: FONTE_MINIMA.descritivoCampo,
+        alinhamento: 'centro',
+        centralizarVertical: true,
+        entreLinhas: 1.0,
+        margemCm: 0.02,
+      },
+    );
+    const prot = proc.protNFe;
+    const valorProtocolo = prot?.nProt
+      ? `${prot.nProt}${prot.dhRecbto ? ` ${data(prot.dhRecbto)} ${hora(prot.dhRecbto)}` : ''}`
+      : '';
+    campo(pagina, CABECALHO_PAISAGEM.protocolo, TEXTO.protocoloUso, valorProtocolo, fontes);
   }
   campo(pagina, CABECALHO_PAISAGEM.naturezaOperacao, 'NATUREZA DA OPERAÇÃO', nfe.ide.natOp, fontes);
   campo(pagina, CABECALHO_PAISAGEM.ieEmitente, 'INSCRIÇÃO ESTADUAL', nfe.emit.ie, fontes);
@@ -546,10 +575,10 @@ function desenhaCorpo(pagina: PDFPage, proc: NFeProc, fontes: FontesDanfe, prime
     [DESTINATARIO_PAISAGEM.dataEmissao, 'DATA DA EMISSÃO', data(nfe.ide.dhEmi)],
     [DESTINATARIO_PAISAGEM.endereco, 'ENDEREÇO', ender ? `${ender.xLgr}, ${ender.nro}` : ''],
     [DESTINATARIO_PAISAGEM.bairro, 'BAIRRO/DISTRITO', ender?.xBairro ?? ''],
-    [DESTINATARIO_PAISAGEM.cep, 'CEP', ender?.cep ?? ''],
+    [DESTINATARIO_PAISAGEM.cep, 'CEP', cep(ender?.cep)],
     [DESTINATARIO_PAISAGEM.dataEntradaSaida, 'DATA DA ENTRADA/SAÍDA', data(nfe.ide.dhSaiEnt)],
     [DESTINATARIO_PAISAGEM.municipio, 'MUNICÍPIO', ender?.xMun ?? ''],
-    [DESTINATARIO_PAISAGEM.fone, 'FONE/FAX', ender?.fone ?? ''],
+    [DESTINATARIO_PAISAGEM.fone, 'FONE/FAX', fone(ender?.fone)],
     [DESTINATARIO_PAISAGEM.uf, 'UF', ender?.uf ?? ''],
     [DESTINATARIO_PAISAGEM.inscricaoEstadual, 'INSCRIÇÃO ESTADUAL', nfe.dest?.ie ?? ''],
     [DESTINATARIO_PAISAGEM.horaEntradaSaida, 'HORA DA ENTRADA/SAÍDA', hora(nfe.ide.dhSaiEnt)],

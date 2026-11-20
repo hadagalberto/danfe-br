@@ -76,7 +76,9 @@ describe('renderDanfe — DANFE retrato', () => {
     esperaTextoNaCaixa(itens, DESTINATARIO.dataEmissao, '10/01/2026', 'destinatário');
     esperaTextoNaCaixa(itens, DESTINATARIO.endereco, 'Rua XV de Novembro, 7342', 'destinatário');
     esperaTextoNaCaixa(itens, DESTINATARIO.bairro, 'Centro', 'destinatário');
-    esperaTextoNaCaixa(itens, DESTINATARIO.cep, '80064391', 'destinatário');
+    // Corrigido (review 2026-11-20, item 7): o CEP deve sair formatado
+    // 80064-391, não cru '80064391' como no layout antigo.
+    esperaTextoNaCaixa(itens, DESTINATARIO.cep, '80064-391', 'destinatário');
     esperaTextoNaCaixa(itens, DESTINATARIO.municipio, 'Curitiba', 'destinatário');
     esperaTextoNaCaixa(itens, DESTINATARIO.uf, 'PR', 'destinatário');
     esperaTextoNaCaixa(itens, DESTINATARIO.inscricaoEstadual, '964979227', 'destinatário');

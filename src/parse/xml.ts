@@ -20,6 +20,9 @@ const PARSER = new XMLParser({
   parseAttributeValue: false,
   trimValues: true,
   processEntities: true,
+  // Documentos fiscais usam o namespace padrão, mas o leiaute admite
+  // prefixos (`<nfe:nfeProc xmlns:nfe=...>`). O parser normaliza os nomes.
+  removeNSPrefix: true,
 });
 
 /** Número de ponto flutuante estrito no formato TDec do leiaute (ex.: `1234.56`). */
@@ -28,8 +31,20 @@ const RE_INTEIRO = /^\d{1,16}$/;
 
 export type XNode = Record<string, unknown>;
 
-/** Faz o parse de um XML completo para a árvore de nós (raiz incluída). */
+/**
+ * Faz o parse de um XML completo para a árvore de nós (raiz incluída).
+ *
+ * DTDs (inclusive inline) são rejeitados antes do parser: entidades definidas
+ * em `<!DOCTYPE>` seriam expandidas (`processEntities: true`), permitindo
+ * billion laughs e injeção de conteúdo em campos fiscais.
+ */
 export function parseXml(xml: string): XNode {
+  if (/<!\s*DOCTYPE/i.test(xml)) {
+    throw new ParseError(
+      'Documento não reconhecido: DOCTYPE/DTD não é permitido em XML fiscal (entidades não são expandidas).',
+      'doctype',
+    );
+  }
   return PARSER.parse(xml) as XNode;
 }
 
@@ -67,10 +82,23 @@ export function int(v: unknown): number | undefined {
   return Number(s);
 }
 
-/** Valor decimal do leiaute (TDec_*), convertido para `number`. */
-export function num(v: unknown): number | undefined {
+/**
+ * Valor decimal do leiaute (TDec_*), convertido para `number`.
+ *
+ * Texto presente em formato inválido (por exemplo `18,00` no lugar de
+ * `18.00`) é um erro de parse — nunca deve virar `undefined` e, depois, 0 por
+ * um `?? 0` no chamador: isso esconderia alíquotas e totais errados.
+ */
+export function num(v: unknown, campo?: string): number | undefined {
   const s = txt(v);
-  if (s === undefined || !RE_DECIMAL.test(s)) return undefined;
+  if (s === undefined) return undefined;
+  if (!RE_DECIMAL.test(s)) {
+    const local = campo ? ` em ${campo}` : '';
+    throw new ParseError(
+      `Valor decimal inválido${local}: ${JSON.stringify(s)} — o leiaute exige ponto decimal (TDec).`,
+      campo,
+    );
+  }
   return Number(s);
 }
 

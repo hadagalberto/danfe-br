@@ -152,6 +152,8 @@ export function calculaDvCpf(base9: string): string {
  * - 401 “CPF do emitente inválido”; 237 “CPF do destinatário inválido”.
  */
 export function validaDocumentos(input: {
+  /** modelo do documento (55 = NF-e, 65 = NFC-e). */
+  modelo?: number;
   emitCnpj?: string;
   emitCpf?: string;
   destInformado: boolean;
@@ -161,6 +163,17 @@ export function validaDocumentos(input: {
 }): ProblemaValidacao[] {
   const problemas: ProblemaValidacao[] = [];
 
+  // MOC Anexo I — grupo E01 (dest): obrigatório para NF-e modelo 55 e
+  // opcional para NFC-e modelo 65 (venda a consumidor anônima).
+  if (input.modelo === 55 && !input.destInformado) {
+    problemas.push({
+      severity: 'erro',
+      code: 'DESTINATARIO_OBRIGATORIO',
+      regra: 'E01-10',
+      campo: 'dest',
+      message: 'NF-e modelo 55 sem grupo dest: o destinatário é obrigatório (E01).',
+    });
+  }
   if (input.emitCnpj === undefined && input.emitCpf === undefined) {
     problemas.push({
       severity: 'erro',

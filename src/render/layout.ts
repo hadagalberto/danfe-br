@@ -95,6 +95,10 @@ export const TEXTO = {
   informacoesComplementares: 'INFORMAÇÕES COMPLEMENTARES',
   reservadoFisco: 'RESERVADO AO FISCO',
   folha: 'FOLHA',
+  /** MOC §3.9.1 — rótulo e texto de consulta do Campo 1/Campo 2. */
+  protocoloUso: 'PROTOCOLO DE AUTORIZAÇÃO DE USO',
+  autenticidade1: 'Consulta de autenticidade no portal nacional da NF-e',
+  autenticidade2: 'www.nfe.fazenda.gov.br/portal ou no site da Sefaz Autorizadora',
 } as const;
 
 /** Bloco do canhoto (MOC §3.8.1, linhas "CANHOTO"). */
@@ -118,6 +122,8 @@ export const CABECALHO = {
   /** Código de barras dos dados (36 dígitos) — exclusivo de contingência (Obs. 9). */
   dadosBarras: caixa(12.79, 4.98, 8.03, 1.48),
   naturezaOperacao: caixa(0.25, 6.46, 7.87, 0.85),
+  /** Campo 2 (MOC §3.9): PROTOCOLO DE AUTORIZAÇÃO DE USO, ao lado de natOp. */
+  protocolo: caixa(8.12, 6.46, 12.7, 0.85),
   dadosNfContingencia: caixa(12.79, 6.46, 8.03, 0.85),
   /** Inscrição estadual / ST / CNPJ do emitente (linha seguinte à natureza). */
   ieEmitente: caixa(0.25, 7.31, 6.86, 0.85),
@@ -219,10 +225,12 @@ export const COLUNAS_PRODUTO: readonly ColunaProduto[] = [
   {
     id: 'descricao',
     titulo: 'DESCRIÇÃO DOS PRODUTOS/SERVIÇOS',
-    larguraCm: 5.0,
+    larguraCm: 4.7,
     alinhamento: 'esquerda',
   },
-  { id: 'ncm', titulo: 'NCM/SH', larguraCm: 0.8, alinhamento: 'centro' },
+  // 8 dígitos a 6 pt medem 0,942 cm na fonte embutida; com 0,06 cm de
+  // margem a coluna precisa de ≥ 1,002 cm (antes: 0,8 cm → quebrava).
+  { id: 'ncm', titulo: 'NCM/SH', larguraCm: 1.1, alinhamento: 'centro' },
   { id: 'cst', titulo: 'CST', larguraCm: 0.6, alinhamento: 'centro' },
   { id: 'cfop', titulo: 'CFOP', larguraCm: 0.9, alinhamento: 'centro' },
   { id: 'unidade', titulo: 'UNID.', larguraCm: 1.0, alinhamento: 'centro' },

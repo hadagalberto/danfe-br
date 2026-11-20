@@ -10,7 +10,7 @@
  * exclusivamente a partir da tag `qrCode` do XML (§3.1.5/§4.2).
  */
 import type { NFe, NFeProc } from '../model/nfe';
-import { cnpjCpf, data, hora, numero } from './formatacao';
+import { cep, cnpjCpf, data, hora, numero } from './formatacao';
 
 /** Tabela de meios de pagamento (IT 2024.002 / tabela oficial de tPag). */
 const MEIOS_PAGAMENTO: Record<string, string> = {
@@ -93,9 +93,11 @@ export function conteudoNfce(documento: NFeProc | NFe, detalharItens = true): Co
   const ender = nfe.emit.enderEmit;
   const cabecalho = [
     `${cnpjCpf(nfe.emit.cnpj ?? nfe.emit.cpf)}`,
-    nfe.emit.xFant ?? nfe.emit.xNome,
+    nfe.emit.xNome,
+    // Manual DANFE NFC-e: razão social obrigatória; fantasia é linha extra.
+    ...(nfe.emit.xFant ? [`Fantasia: ${nfe.emit.xFant}`] : []),
     `${ender.xLgr}, ${ender.nro}${ender.xCpl ? `, ${ender.xCpl}` : ''}`,
-    `${ender.xBairro} - ${ender.xMun}/${ender.uf} - CEP ${ender.cep ?? ''}`,
+    `${ender.xBairro} - ${ender.xMun}/${ender.uf} - CEP ${cep(ender.cep)}`,
     'Documento Auxiliar da Nota Fiscal de Consumidor Eletrônica',
   ];
 
@@ -136,7 +138,7 @@ export function conteudoNfce(documento: NFeProc | NFe, detalharItens = true): Co
   if (dest?.enderDest) {
     const e = dest.enderDest;
     consumidor.push(`${e.xLgr}, ${e.nro}${e.xCpl ? `, ${e.xCpl}` : ''}`);
-    consumidor.push(`${e.xBairro} - ${e.xMun}/${e.uf} - CEP ${e.cep ?? ''}`);
+    consumidor.push(`${e.xBairro} - ${e.xMun}/${e.uf} - CEP ${cep(e.cep)}`);
   }
 
   const homologacao = nfe.ide.tpAmb === 2;

@@ -5,11 +5,11 @@
  * (elementos, escolhas e obrigatoriedade) e MOC 7.0 — Anexo I (descrições).
  *
  * O parser é tolerante por natureza de leitura: campos opcionais ausentes
- * viram `undefined`; grupos repetidos ausentes viram arrays vazios. Campos
- * com conteúdo fora do padrão (ex.: decimal malformado) viram `undefined` —
- * a validação estrutural (`validateNFe`) reporta o problema; o parser só lança
- * `ParseError` quando um campo obrigatório para a composição do documento
- * (chave, ide, emit, total) está ausente.
+ * viram `undefined`; grupos repetidos ausentes viram arrays vazios. Texto
+ * presente em formato inválido (ex.: decimal com vírgula) lança `ParseError`
+ * imediatamente — convertê-lo em `undefined`/0 esconderia alíquotas erradas.
+ * O parser lança `ParseError` também quando um campo obrigatório para a
+ * composição do documento (chave, ide, emit, total) está ausente.
  */
 import type {
   AutXml,
@@ -518,7 +518,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         cst: cst(n) as '00',
         modBC: (int(n['modBC']) ?? 0) as 0 | 1 | 2 | 3,
         vBC: num(n['vBC']) ?? 0,
-        pICMS: num(n['pICMS']) ?? 0,
+        pICMS: num(n['pICMS'], 'pICMS') ?? 0,
         vICMS: num(n['vICMS']) ?? 0,
         pFCP: num(n['pFCP']),
         vFCP: num(n['vFCP']),
@@ -539,7 +539,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         cst: cst(n) as '10',
         modBC: (int(n['modBC']) ?? 0) as 0 | 1 | 2 | 3,
         vBC: num(n['vBC']) ?? 0,
-        pICMS: num(n['pICMS']) ?? 0,
+        pICMS: num(n['pICMS'], 'pICMS') ?? 0,
         vICMS: num(n['vICMS']) ?? 0,
         vBCFCP: num(n['vBCFCP']),
         pFCP: num(n['pFCP']),
@@ -574,7 +574,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         modBC: (int(n['modBC']) ?? 0) as 0 | 1 | 2 | 3,
         pRedBC: num(n['pRedBC']) ?? 0,
         vBC: num(n['vBC']) ?? 0,
-        pICMS: num(n['pICMS']) ?? 0,
+        pICMS: num(n['pICMS'], 'pICMS') ?? 0,
         vICMS: num(n['vICMS']) ?? 0,
         vBCFCP: num(n['vBCFCP']),
         pFCP: num(n['pFCP']),
@@ -611,7 +611,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         pRedBC: num(n['pRedBC']),
         cBenefRBC: txt(n['cBenefRBC']),
         vBC: num(n['vBC']),
-        pICMS: num(n['pICMS']),
+        pICMS: num(n['pICMS'], 'pICMS'),
         vICMSOp: num(n['vICMSOp']),
         pDif: num(n['pDif']),
         vICMSDif: num(n['vICMSDif']),
@@ -661,7 +661,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         modBC: (int(n['modBC']) ?? 0) as 0 | 1 | 2 | 3,
         pRedBC: num(n['pRedBC']) ?? 0,
         vBC: num(n['vBC']) ?? 0,
-        pICMS: num(n['pICMS']) ?? 0,
+        pICMS: num(n['pICMS'], 'pICMS') ?? 0,
         vICMS: num(n['vICMS']) ?? 0,
         modBCST: (int(n['modBCST']) ?? 0) as 0 | 1 | 2 | 3,
         pMVAST: num(n['pMVAST']),
@@ -681,7 +681,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         modBC: int(n['modBC']) as 0 | 1 | 2 | 3 | undefined,
         vBC: num(n['vBC']),
         pRedBC: num(n['pRedBC']),
-        pICMS: num(n['pICMS']),
+        pICMS: num(n['pICMS'], 'pICMS'),
         vICMS: num(n['vICMS']),
         vBCFCP: num(n['vBCFCP']),
         pFCP: num(n['pFCP']),
@@ -704,7 +704,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         modBC: (int(n['modBC']) ?? 0) as 0 | 1 | 2 | 3,
         vBC: num(n['vBC']) ?? 0,
         pRedBC: num(n['pRedBC']),
-        pICMS: num(n['pICMS']) ?? 0,
+        pICMS: num(n['pICMS'], 'pICMS') ?? 0,
         vICMS: num(n['vICMS']) ?? 0,
         modBCST: (int(n['modBCST']) ?? 0) as 0 | 1 | 2 | 3,
         pMVAST: num(n['pMVAST']),
@@ -788,7 +788,7 @@ function parseIcmsGrupo(grupo: string, n: XNode, c: string): Icms {
         modBC: int(n['modBC']) as 0 | 1 | 2 | 3 | undefined,
         vBC: num(n['vBC']),
         pRedBC: num(n['pRedBC']),
-        pICMS: num(n['pICMS']),
+        pICMS: num(n['pICMS'], 'pICMS'),
         vICMS: num(n['vICMS']),
         modBCST: int(n['modBCST']) as 0 | 1 | 2 | 3 | undefined,
         pMVAST: num(n['pMVAST']),

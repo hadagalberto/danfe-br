@@ -43,10 +43,12 @@ import { desenharCode128, desenharLinha, desenharQuadro } from './codigo-barras'
 import { incorporaFontes, type FontesDanfe } from './font';
 import {
   aliquotaIcmsItem,
+  cep,
   cnpjCpf,
   cstItem,
   data,
   diaEmissao,
+  fone,
   fretePorConta,
   hora,
   inteiro,
@@ -463,14 +465,17 @@ async function desenhaCabecalho(
 
   const ender = nfe.emit.enderEmit;
   const enderecoPartes = [
+    // MOC §3.7.6: a razão social é o campo do emitente; o fantasia, quando
+    // existir, aparece apenas como linha extra (não no lugar da razão social).
+    nfe.emit.xFant ? `Fantasia: ${nfe.emit.xFant}` : '',
     `${ender.xLgr}, ${ender.nro}${ender.xCpl ? `, ${ender.xCpl}` : ''}`,
-    `${ender.xBairro} - ${ender.xMun}/${ender.uf} - CEP ${ender.cep ?? ''}`,
-    ender.fone ? `Fone: ${ender.fone}` : '',
+    `${ender.xBairro} - ${ender.xMun}/${ender.uf} - CEP ${cep(ender.cep)}`,
+    ender.fone ? `Fone: ${fone(ender.fone)}` : '',
   ].filter((parte) => parte.length > 0);
   desenharTexto(
     pagina,
     { x: xConteudo, y: CABECALHO.emitente.y + 0.35, largura: larguraConteudo, altura: 1.0 },
-    nfe.emit.xFant ?? nfe.emit.xNome,
+    nfe.emit.xNome,
     alturaPt,
     { fonte: fontes.negrito, tamanho: FONTE_MINIMA.emitenteNome, maxLinhas: 1, margemCm: 0.02 },
   );
@@ -568,7 +573,9 @@ async function desenhaCabecalho(
       pagina,
       {
         x: CABECALHO.chaveTexto.x + 0.05,
-        y: CABECALHO.chaveTexto.y + 0.24 + indice * 0.31,
+        // 0,19 + 2 × 0,30 = 0,79 cm: a segunda linha conserva 0,06 cm de
+        // folga até a borda inferior do quadro (0,85 cm no MOC §3.8.1).
+        y: CABECALHO.chaveTexto.y + 0.19 + indice * 0.3,
         largura: CABECALHO.chaveTexto.largura - 0.1,
         altura: 0.3,
       },
@@ -598,6 +605,31 @@ async function desenhaCabecalho(
         entreLinhas: 1.0,
       });
     }
+  } else {
+    // MOC §3.9.1 (emissão normal/SVC): Campo 1 = consulta de autenticidade,
+    // Campo 2 = protocolo de autorização de uso (nProt + dhRecbto).
+    desenharQuadro(pagina, CABECALHO.dadosBarras, alturaPt, { espessura: 0.5 });
+    desenharTexto(
+      pagina,
+      CABECALHO.dadosBarras,
+      `${TEXTO.autenticidade1}\n${TEXTO.autenticidade2}`,
+      alturaPt,
+      {
+        fonte: fontes.regular,
+        tamanho: FONTE_MINIMA.descritivoCampo,
+        alinhamento: 'centro',
+        centralizarVertical: true,
+        entreLinhas: 1.0,
+        margemCm: 0.03,
+      },
+    );
+    const prot = proc.protNFe;
+    const valorProtocolo = prot?.nProt
+      ? `${prot.nProt}${prot.dhRecbto ? ` ${data(prot.dhRecbto)} ${hora(prot.dhRecbto)}` : ''}`
+      : '';
+    campo(pagina, CABECALHO.protocolo, TEXTO.protocoloUso, valorProtocolo, fontes, alturaPt, {
+      tamanhoValor: FONTE_MINIMA.demais,
+    });
   }
 
   campo(
@@ -693,7 +725,7 @@ function desenhaCorpoPrimeiraPagina(
     alturaPt,
   );
   campo(pagina, DESTINATARIO.bairro, 'BAIRRO/DISTRITO', ender?.xBairro ?? '', fontes, alturaPt);
-  campo(pagina, DESTINATARIO.cep, 'CEP', ender?.cep ?? '', fontes, alturaPt);
+  campo(pagina, DESTINATARIO.cep, 'CEP', cep(ender?.cep), fontes, alturaPt);
   campo(
     pagina,
     DESTINATARIO.dataEntradaSaida,
@@ -704,7 +736,7 @@ function desenhaCorpoPrimeiraPagina(
     { valorNegrito: true },
   );
   campo(pagina, DESTINATARIO.municipio, 'MUNICÍPIO', ender?.xMun ?? '', fontes, alturaPt);
-  campo(pagina, DESTINATARIO.fone, 'FONE/FAX', ender?.fone ?? '', fontes, alturaPt);
+  campo(pagina, DESTINATARIO.fone, 'FONE/FAX', fone(ender?.fone), fontes, alturaPt);
   campo(pagina, DESTINATARIO.uf, 'UF', ender?.uf ?? '', fontes, alturaPt);
   campo(
     pagina,

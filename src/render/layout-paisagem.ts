@@ -66,6 +66,8 @@ export const CABECALHO_PAISAGEM = {
   tipoOperacao: caixa(13.89, 1.8, 2.95, 0.72),
   numeroSerieFolha: caixa(13.89, 2.55, 2.95, 1.05),
   naturezaOperacao: caixa(2.92, 3.57, 13.97, 0.64),
+  /** Campo 2 (MOC §3.9): PROTOCOLO DE AUTORIZAÇÃO DE USO. */
+  protocolo: caixa(16.89, 3.57, 12.57, 0.64),
   ieEmitente: caixa(2.92, 4.21, 8.89, 0.64),
   ieStEmitente: caixa(11.81, 4.21, 8.89, 0.64),
   cnpjEmitente: caixa(20.7, 4.21, 8.76, 0.64),
@@ -157,7 +159,9 @@ export interface ColunaProdutoPaisagem {
  * (Obs. 4). Normalizadas abaixo para a largura normativa de 26,54 cm.
  */
 const LARGURAS_MEDIDAS = [
-  1.86, 6.56, 0.77, 0.74, 1.02, 1.01, 1.27, 2.03, 2.03, 1.78, 1.76, 1.41, 1.64, 1.27, 0.76, 0.85,
+  // NCM (índice 2) ampliado de 0,77 para 1,05 e DESCRIÇÃO reduzida na mesma
+  // proporção: 8 dígitos a 6 pt não cabiam na largura medida do Anexo III.04.
+  1.86, 6.28, 1.05, 0.74, 1.02, 1.01, 1.27, 2.03, 2.03, 1.78, 1.76, 1.41, 1.64, 1.27, 0.76, 0.85,
 ] as const;
 const FATOR = PRODUTOS_PAISAGEM.quadro.largura / LARGURAS_MEDIDAS.reduce((a, b) => a + b, 0);
 
