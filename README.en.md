@@ -10,10 +10,10 @@ auxiliary documents as PDF: **DANFE** (portrait and landscape) and
 **DANFE NFC-e** (80 mm and 58 mm, with the QR Code), plus an **ESC/POS** byte
 stream for thermal printers.
 
-> Status: **Milestones 1, 2 and 3 complete** — typed model, parser, validation,
+> Status: **Milestones 1–4 complete** — typed model, parser, validation,
 > fixture factory, barcodes (Code 128 / QR Code), XMLDSig verification of
-> `infNFe` and **portrait DANFE** PDF rendering per MOC 7.0 Anexo II.
-> Landscape DANFE, NFC-e, ESC/POS and the CLI arrive in later milestones.
+> `infNFe`, portrait **and landscape DANFE**, NFC-e (80/58 mm), ESC/POS output
+> and event documents (cancellation and correction letter). The CLI is next.
 
 ## Install
 
@@ -156,6 +156,27 @@ embedded font is DANFE Sans (subset of Liberation Sans, SIL OFL 1.1 — see
 `@napi-rs/canvas` and compare against `tests/golden/`; regenerate with
 `npm run golden`.
 
+### Landscape DANFE, NFC-e, ESC/POS and events (milestone 4)
+
+```ts
+import { renderDanfe, renderDanfeNfce, toEscPos, renderEvento } from 'danfe-br';
+
+const landscape = await renderDanfe(proc, { layout: 'paisagem' }); // MOC §3.8.2
+const receipt80 = await renderDanfeNfce(procNfce);
+const receipt58 = await renderDanfeNfce(procNfce, { larguraMm: 58 });
+const escpos = toEscPos(procNfce); // native GS ( k QR command, PC860, partial cut
+const cancellation = await renderEvento(procCancellation); // CANCELADO stamp
+const correction = await renderEvento(procCCe);
+```
+
+The NFC-e follows the official
+[SVRS NFC-e manuals](https://dfe-portal.svrs.rs.gov.br/Nfce/Documentos)
+(Manual de Padrões Técnicos v5.1 and Manual de Especificações Técnicas v5.0):
+divisions I–IX, 2 mm margins, 25 × 25 mm QR Code with level M/UTF-8 generated
+from the XML `qrCode` field, and the access key in 11 groups of 4 digits.
+ESC/POS command bytes are asserted with exact vectors in the test suite; the
+Epson references are cited in `src/render/escppos.ts`.
+
 ## Development
 
 ```bash
@@ -164,7 +185,7 @@ npm run verify     # typecheck + lint + format + build + tests
 npm run fixtures   # regenerate the corpus in tests/fixtures/ (deterministic)
 ```
 
-Tests run on **vitest** (173 tests), including a committed corpus of 45 XML
+Tests run on **vitest** (259 tests), including a committed corpus of 45 XML
 fixtures in `tests/fixtures/` (one invoice per CST/CSOSN family, 10/60/120
 items, installments, transport, homologation, denied, no-protocol,
 alphanumeric CNPJ, DIFAL, mixed ISSQN, IBS/CBS, three NFC-e's, cancellation
@@ -172,7 +193,10 @@ and correction-letter events).
 
 ## Official sources
 
-- MOC 7.0 and annexes (CONFAZ, Ato COTEPE ICMS 69/20).
+- MOC 7.0 and annexes (CONFAZ, Ato COTEPE ICMS 69/20), including the landscape
+  layout in Anexo II §3.8.2 / Anexo III.04.
+- SVRS NFC-e manuals portal: DANFE NFC-e technical specification v5.0 and DANFE
+  NFC-e standards manual v5.1.
 - National NF-e portal and SVRS DFe portal (XSD packages PL_009q, technical
   notes 2024.002 / 2025.001 etc.).
 - Official XSDs vendored under [`schemas/`](schemas/README.md) with source

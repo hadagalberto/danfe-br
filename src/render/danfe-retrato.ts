@@ -17,8 +17,7 @@
  */
 import { PDFDocument, degrees, type PDFFont, type PDFPage } from 'pdf-lib';
 import { digitoVerificadorChave } from '../validate/chave';
-import { CSTAT_DENEGADO } from '../validate/protocolo';
-import { TP_EVENTO_CANCELAMENTO, type ProcEventoNFe } from '../model/evento';
+import type { ProcEventoNFe } from '../model/evento';
 import type { Det, Icms, Ipi, NFe, NFeProc } from '../model/nfe';
 import {
   BLOCOS_CHAVE,
@@ -57,9 +56,13 @@ import {
   soDigitos,
 } from './formatacao';
 import { desenharCampo, desenharTexto, quebrarLinhas } from './texto';
+import { renderDanfePaisagem } from './danfe-paisagem';
+import { detectaSituacao, type Situacao } from './situacao';
 
 /** Opções de renderização do DANFE retrato. */
 export interface OpcoesRenderDanfe {
+  /** Leiaute da folha: padrão `retrato`; `paisagem` usa o Anexo II §3.8.2. */
+  layout?: 'retrato' | 'paisagem';
   /** Logotipo do emitente (PNG ou JPEG). Opcional conforme MOC §3.1.3. */
   logo?: Uint8Array;
   /** Emite o bloco de canhoto no topo (padrão: true). */
@@ -94,57 +97,12 @@ interface PaginaPlano {
   informacoes: string[];
 }
 
-interface Situacao {
-  homologacao: boolean;
-  semValorFiscal: boolean;
-  denegada: boolean;
-  cancelada: boolean;
-  contingencia: boolean;
-  marcas: { texto: string; cor: [number, number, number] }[];
-}
-
 const ALTURA_LINHA_PRODUTO_CM = (FONTE_MINIMA.produto * 1.15) / PT_POR_CM;
 const CAPACIDADE_INFORMACOES_LINHAS = 12;
 
 function normaliza(documento: NFeProc | NFe): NFeProc {
   if ('nfe' in documento) return documento;
   return { versao: documento.versao, nfe: documento };
-}
-
-function detectaSituacao(proc: NFeProc, opcoes: OpcoesRenderDanfe): Situacao {
-  const ide = proc.nfe.ide;
-  const homologacao = ide.tpAmb === 2;
-  const denegada =
-    opcoes.denegada ?? (proc.protNFe !== undefined && CSTAT_DENEGADO.has(proc.protNFe.cStat));
-  const cancelada =
-    opcoes.cancelada ??
-    opcoes.eventos?.some(
-      (evento) =>
-        evento.evento.infEvento.tpEvento === TP_EVENTO_CANCELAMENTO &&
-        (evento.retEvento.infEvento.cStat === 135 ||
-          evento.retEvento.infEvento.cStat === 101 ||
-          evento.retEvento.infEvento.cStat === 151),
-    ) ??
-    false;
-  const contingencia = opcoes.contingencia ?? ide.tpEmis !== 1;
-  const autorizada =
-    proc.protNFe !== undefined && (proc.protNFe.cStat === 100 || proc.protNFe.cStat === 150);
-  const semValorFiscal = homologacao || !autorizada || cancelada || denegada;
-
-  const marcas: Situacao['marcas'] = [];
-  if (semValorFiscal) {
-    marcas.push({ texto: TEXTO.semValorFiscal, cor: [0.55, 0.55, 0.55] });
-  }
-  if (contingencia) {
-    marcas.push({ texto: TEXTO.contingencia, cor: [0.45, 0.45, 0.45] });
-  }
-  if (cancelada) {
-    marcas.push({ texto: TEXTO.cancelada, cor: [0.75, 0.12, 0.12] });
-  }
-  if (denegada) {
-    marcas.push({ texto: TEXTO.denegada, cor: [0.75, 0.12, 0.12] });
-  }
-  return { homologacao, semValorFiscal, denegada, cancelada, contingencia, marcas };
 }
 
 /** Valor numérico de um campo do ICMS, seja qual for o grupo (CST/CSOSN). */
@@ -1028,6 +986,7 @@ export async function renderDanfe(
   opcoes: OpcoesRenderDanfe = {},
 ): Promise<Uint8Array> {
   const proc = normaliza(documento);
+  if (opcoes.layout === 'paisagem') return renderDanfePaisagem(proc, opcoes);
   if (!/^\d{44}$/.test(proc.nfe.chave)) {
     throw new Error(
       `Chave de acesso inválida: esperados 44 dígitos, recebido ${JSON.stringify(proc.nfe.chave)}.`,

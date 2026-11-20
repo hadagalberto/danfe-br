@@ -10,11 +10,11 @@ renderiza os documentos auxiliares oficiais em PDF: **DANFE** (retrato e
 paisagem) e **DANFE NFC-e** (80 mm e 58 mm, com QR Code), além de saída
 **ESC/POS** para impressoras térmicas.
 
-> Status: **Marcos 1, 2 e 3 concluídos** — modelo tipado, parser, validação,
+> Status: **Marcos 1 a 4 concluídos** — modelo tipado, parser, validação,
 > fábrica de fixtures, códigos de barras (Code 128 / QR Code), verificação
-> da assinatura XMLDSig do `infNFe` e renderização do **DANFE retrato** em PDF
-> conforme o Anexo II do MOC 7.0. DANFE paisagem, NFC-e, ESC/POS e CLI
-> chegam nos marcos seguintes.
+> da assinatura XMLDSig do `infNFe`, **DANFE retrato e paisagem**, **DANFE
+> NFC-e 80/58 mm**, **ESC/POS** e composição de eventos (cancelamento e CC-e).
+> A CLI está prevista para o próximo marco.
 
 ## Instalação
 
@@ -173,6 +173,34 @@ citadas nos comentários de `src/render/`. A fonte embutida é a **DANFE Sans**
 incorporar fontes TrueType; é a única dependência de runtime além do próprio
 `pdf-lib` e do parser XML.
 
+### DANFE paisagem, NFC-e, ESC/POS e eventos (marco 4)
+
+```ts
+import { renderDanfe, renderDanfeNfce, toEscPos, renderEvento } from 'danfe-br';
+
+// DANFE A4 paisagem — MOC 7.0 Anexo II §3.8.2 / Anexo III.04
+const paisagem = await renderDanfe(proc, { layout: 'paisagem' });
+
+// DANFE NFC-e térmico — QR Code lido de infNFeSupl/qrCode, chave em 11 blocos de 4
+const cupom80 = await renderDanfeNfce(procNfce);
+const cupom58 = await renderDanfeNfce(procNfce, { larguraMm: 58 });
+
+// ESC/POS: comando nativo GS ( k para QR Code, PC860, corte parcial
+const bytes = toEscPos(procNfce, { larguraMm: 80 });
+
+// Comprovantes de eventos: carimbo CANCELADO e Carta de Correção
+const cancelled = await renderEvento(procCancelamento);
+const cce = await renderEvento(procCCe);
+```
+
+A NFC-e segue o
+[Manual de Padrões Técnicos do DANFE-NFC-e e QR Code v5.1](https://dfe-portal.svrs.rs.gov.br/Nfce/Documentos)
+(divisões I–IX, margens de 2 mm, QR de 25 × 25 mm com nível M/UTF-8) e o
+[Manual de Especificações Técnicas do DANFE NFC-e e QR Code v5.0](https://dfe-portal.svrs.rs.gov.br/Nfce/Documentos),
+com as URLs de download oficiais citadas em `src/render/nfce-conteudo.ts`. O
+ESC/POS usa os comandos Epson documentados em `src/render/escppos.ts`; a
+sequência de bytes é verificada com vetores exatos nos testes.
+
 ### Testes de renderização
 
 ```bash
@@ -210,7 +238,7 @@ npm run fixtures   # regenera o corpus em tests/fixtures/ (determinístico)
 npm run golden     # regenera as imagens douradas em tests/golden/
 ```
 
-- Testes: **vitest** — 230 testes, incluindo o corpus com 45 XMLs em
+- Testes: **vitest** — 259 testes, incluindo o corpus com 45 XMLs em
   `tests/fixtures/` (uma nota por CST/CSOSN, 10/60/120 itens, duplicatas,
   transporte, homologação, denegada, sem protocolo, CNPJ alfanumérico, DIFAL,
   ISSQN conjugado, IBS/CBS, 3 NFC-e's, cancelamento e CC-e).
@@ -221,7 +249,10 @@ npm run golden     # regenera as imagens douradas em tests/golden/
 
 - [MOC 7.0 e anexos](https://www.confaz.fazenda.gov.br/legislacao/arquivo-manuais)
   (Ato COTEPE ICMS 69/20) — Visão Geral, Anexo I (leiaute e regras de
-  validação) e Anexo II (DANFE).
+  validação) e Anexo II (DANFE, inclusive §3.8.2/Anexo III.04 paisagem).
+- [Portal NFC-e da SVRS — Manuais](https://dfe-portal.svrs.rs.gov.br/Nfce/Documentos)
+  — Manual de Padrões Técnicos do DANFE-NFC-e e QR Code v5.1 e Manual de
+  Especificações Técnicas do DANFE NFC-e e QR Code v5.0.
 - [Portal Nacional da NF-e](https://www.nfe.fazenda.gov.br) e
   [Portal DFe da SVRS](https://dfe-portal.svrs.rs.gov.br/NFe/Documentos)
   (schemas XSD PL_009q e notas técnicas 2024.002, 2025.001 etc.).

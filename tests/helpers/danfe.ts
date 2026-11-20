@@ -23,8 +23,12 @@ export async function renderiza(arquivo: string, opcoes?: OpcoesRenderDanfe): Pr
 }
 
 /** Textos cuja origem cai dentro da caixa (coordenadas MOC, origem no topo). */
-export function itensNaCaixa(itens: TextoExtraido[], caixa: Caixa): TextoExtraido[] {
-  const alturaPt = PAGINA.alturaCm * PT_POR_CM;
+export function itensNaCaixaPagina(
+  itens: TextoExtraido[],
+  caixa: Caixa,
+  alturaCm: number = PAGINA.alturaCm,
+): TextoExtraido[] {
+  const alturaPt = alturaCm * PT_POR_CM;
   const tolerancia = 0.15;
   return itens.filter((item) => {
     const xCm = item.x / PT_POR_CM;
@@ -36,6 +40,10 @@ export function itensNaCaixa(itens: TextoExtraido[], caixa: Caixa): TextoExtraid
       yCm <= caixa.y + caixa.altura + tolerancia
     );
   });
+}
+
+export function itensNaCaixa(itens: TextoExtraido[], caixa: Caixa): TextoExtraido[] {
+  return itensNaCaixaPagina(itens, caixa);
 }
 
 /** Texto concatenado de uma caixa, normalizado para comparação. */

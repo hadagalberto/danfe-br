@@ -103,3 +103,21 @@ export { renderDanfe } from './render/danfe-retrato';
 export type { OpcoesRenderDanfe } from './render/danfe-retrato';
 export { FONTE_MINIMA, LAYOUT_RETRATO, PAGINA, PT_POR_CM, COLUNAS_PRODUTO } from './render/layout';
 export type { Caixa, ColunaProduto } from './render/layout';
+
+// Marco 4 — DANFE paisagem, NFC-e, ESC/POS e eventos
+export { renderDanfePaisagem } from './render/danfe-paisagem';
+export { renderDanfeNfce } from './render/danfe-nfce';
+export type { OpcoesRenderDanfeNfce } from './render/danfe-nfce';
+export { toEscPos, colunasPapel, codificaPc860 } from './render/escppos';
+export type { OpcoesEscPos } from './render/escppos';
+export { renderEvento } from './render/evento';
+export type { OpcoesRenderEvento } from './render/evento';
+export { conteudoNfce, nomePagamento } from './render/nfce-conteudo';
+export type { ConteudoNfce, LinhaItemNfce } from './render/nfce-conteudo';
+export {
+  ALTURA_PAGINA_PAISAGEM_PT,
+  LAYOUT_PAISAGEM,
+  PAGINA_PAISAGEM,
+  COLUNAS_PRODUTO_PAISAGEM,
+} from './render/layout-paisagem';
+export type { ColunaProdutoPaisagem } from './render/layout-paisagem';

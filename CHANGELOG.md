@@ -5,6 +5,35 @@ e [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+### Adicionado — Marco 4: DANFE paisagem, NFC-e, ESC/POS e eventos
+
+- **`renderDanfe(modelo, { layout: 'paisagem' })`** (e o atalho
+  `renderDanfePaisagem`): PDF A4 paisagem conforme o MOC 7.00 — Anexo II §3.8.2
+  e modelo Anexo III.04, com canhoto vertical, rótulos girados, Code 128C da
+  chave (máscara em 11 blocos de 4), todos os quadros, colunas de produtos na
+  ordem normativa, paginação com `FOLHA X/Y` e marcas d'água. Larguras de
+  colunas medidas no desenho oficial e normalizadas para os 26,54 cm do quadro;
+  URLs e metodologia citadas em `src/render/layout-paisagem.ts`.
+- **`renderDanfeNfce(modelo, { larguraMm: 80 | 58, ... })`**: DANFE NFC-e em
+  papel térmico com as divisões I–IX do _Manual de Especificações Técnicas do
+  DANFE NFC-e e QR Code_ v5.0 / _Manual de Padrões Técnicos do DANFE-NFC-e e QR
+  Code_ v5.1 (portal SVRS, URLs citadas em `src/render/nfce-conteudo.ts`).
+  Margens de 2 mm, QR Code de 25 × 25 mm (22 mm de conteúdo + 3 mm de zona
+  silenciosa, nível M/UTF-8) gerado **somente** a partir de `infNFeSupl/qrCode`,
+  chave em 11 blocos de 4, consumidor, protocolo e mensagens de contingência /
+  homologação. Detecta modelo 65; rejeita nota sem QR.
+- **`toEscPos(modelo)`**: fluxo ESC/POS com comando nativo de QR Code `GS ( k`
+  (modelo 2, módulo 3, correção M), tabela de caracteres PC860 para pt-BR,
+  alinhamento/negrito, avanço de linhas e corte parcial. Comandos e referência
+  Epson citados em `src/render/escppos.ts`.
+- **`renderEvento(procEventoNFe)`**: comprovante A4 de cancelamento (carimbo
+  `CANCELADO`, `SEM VALOR FISCAL`, justificativa e protocolos) e Carta de
+  Correção Eletrônica (`CC-e`, correção, condições de uso e protocolo).
+- **Testes**: 29 novos testes funcionais (posições por quadro, paginação,
+  marcas d'água, fontes mínimas, QR decodificado por jsQR, byte stream ESC/POS
+  exato e vetores inválidos) e 5 regressões visuais com goldens em
+  `tests/golden/` para paisagem, NFC-e 80/58 mm, cancelamento e CC-e.
+
 ### Adicionado — Marco 3: renderização do DANFE retrato
 
 - **`renderDanfe(modelo, opcoes?)`**: PDF A4 retrato integralmente baseado no
