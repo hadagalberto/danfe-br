@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+    <infNFe Id="NFe35260219006976943320550670005432441744239839" versao="4.00">
+      <ide>
+        <cUF>35</cUF>
+        <cNF>74423983</cNF>
+        <natOp>VENDA DE PRODUÇÃO PRÓPRIA</natOp>
+        <mod>55</mod>
+        <serie>67</serie>
+        <nNF>543244</nNF>
+        <dhEmi>2026-02-09T09:10:00-03:00</dhEmi>
+        <tpNF>1</tpNF>
+        <idDest>1</idDest>
+        <cMunFG>3550308</cMunFG>
+        <tpImp>1</tpImp>
+        <tpEmis>1</tpEmis>
+        <cDV>9</cDV>
+        <tpAmb>1</tpAmb>
+        <finNFe>1</finNFe>
+        <indFinal>0</indFinal>
+        <indPres>0</indPres>
+        <procEmi>0</procEmi>
+        <verProc>danfe-br-fixtures 0.1.0</verProc>
+      </ide>
+      <emit>
+        <CNPJ>19006976943320</CNPJ>
+        <xNome>Comercial Horizonte S.A.</xNome>
+        <xFant>Comercial</xFant>
+        <enderEmit>
+          <xLgr>Avenida das Indústrias</xLgr>
+          <nro>7111</nro>
+          <xCpl>Galpão 3</xCpl>
+          <xBairro>Distrito Industrial</xBairro>
+          <cMun>3550308</cMun>
+          <xMun>Campinas</xMun>
+          <UF>SP</UF>
+          <CEP>13061482</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>1951985748</fone>
+        </enderEmit>
+        <IE>P191243838324</IE>
+        <CRT>1</CRT>
+      </emit>
+      <dest>
+        <CNPJ>17666016671345</CNPJ>
+        <xNome>Carlos Eduardo Lima - ME</xNome>
+        <enderDest>
+          <xLgr>Rua XV de Novembro</xLgr>
+          <nro>4903</nro>
+          <xBairro>Centro</xBairro>
+          <cMun>4106902</cMun>
+          <xMun>Curitiba</xMun>
+          <UF>PR</UF>
+          <CEP>80061700</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>4157087858</fone>
+        </enderDest>
+        <indIEDest>1</indIEDest>
+        <IE>984075746</IE>
+        <email>destinatario5966@exemplo.com.br</email>
+      </dest>
+      <det nItem="1">
+        <prod>
+          <cProd>SKU011558</cProd>
+          <cEAN>SEM GTIN</cEAN>
+          <xProd>Produto sintético 9431</xProd>
+          <NCM>68071220</NCM>
+          <CFOP>5102</CFOP>
+          <uCom>UN</uCom>
+          <qCom>38.0000</qCom>
+          <vUnCom>33.8800000000</vUnCom>
+          <vProd>1287.44</vProd>
+          <cEANTrib>SEM GTIN</cEANTrib>
+          <uTrib>UN</uTrib>
+          <qTrib>38.0000</qTrib>
+          <vUnTrib>33.8800000000</vUnTrib>
+          <indTot>1</indTot>
+        </prod>
+        <imposto>
+          <vTotTrib>0.19</vTotTrib>
+          <ICMS>
+            <ICMSSN202>
+              <orig>0</orig>
+              <CSOSN>203</CSOSN>
+              <modBCST>4</modBCST>
+              <pRedBCST>10.00</pRedBCST>
+              <vBCST>1260.00</vBCST>
+              <pICMSST>18.00</pICMSST>
+              <vICMSST>226.80</vICMSST>
+            </ICMSSN202>
+          </ICMS>
+          <PIS>
+            <PISAliq>
+              <CST>01</CST>
+              <vBC>0.00</vBC>
+              <pPIS>0.00</pPIS>
+              <vPIS>2.10</vPIS>
+            </PISAliq>
+          </PIS>
+          <COFINS>
+            <COFINSAliq>
+              <CST>01</CST>
+              <vBC>0.00</vBC>
+              <pCOFINS>0.00</pCOFINS>
+              <vCOFINS>2.30</vCOFINS>
+            </COFINSAliq>
+          </COFINS>
+        </imposto>
+      </det>
+      <total>
+        <ICMSTot>
+          <vBC>0.00</vBC>
+          <vICMS>0.00</vICMS>
+          <vICMSDeson>0.00</vICMSDeson>
+          <vFCP>0.00</vFCP>
+          <vBCST>1260.00</vBCST>
+          <vST>226.80</vST>
+          <vFCPST>0.00</vFCPST>
+          <vFCPSTRet>0.00</vFCPSTRet>
+          <vProd>1287.44</vProd>
+          <vFrete>0.00</vFrete>
+          <vSeg>0.00</vSeg>
+          <vDesc>0.00</vDesc>
+          <vII>0.00</vII>
+          <vIPI>0.00</vIPI>
+          <vIPIDevol>0.00</vIPIDevol>
+          <vPIS>2.10</vPIS>
+          <vCOFINS>2.30</vCOFINS>
+          <vOutro>0.00</vOutro>
+          <vNF>1514.24</vNF>
+          <vTotTrib>0.19</vTotTrib>
+        </ICMSTot>
+      </total>
+      <transp>
+        <modFrete>9</modFrete>
+      </transp>
+      <pag>
+        <detPag>
+          <indPag>0</indPag>
+          <tPag>15</tPag>
+          <vPag>1514.24</vPag>
+        </detPag>
+      </pag>
+    </infNFe>
+  </NFe>
+  <protNFe versao="4.00">
+    <infProt Id="ID000000771359628">
+      <tpAmb>1</tpAmb>
+      <verAplic>SVRS-2026</verAplic>
+      <chNFe>35260219006976943320550670005432441744239839</chNFe>
+      <dhRecbto>2026-02-09T09:10:00-03:00</dhRecbto>
+      <nProt>000000771359628</nProt>
+      <cStat>100</cStat>
+      <xMotivo>Autorizado o uso da NF-e</xMotivo>
+    </infProt>
+  </protNFe>
+</nfeProc>

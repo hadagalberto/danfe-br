@@ -1,0 +1,7 @@
+dist
+coverage
+node_modules
+.tmp
+package-lock.json
+# SPEC do projeto (documento do mantenedor) — não reformatar
+SPEC.md

@@ -1,0 +1,15 @@
+# Normaliza finais de linha para LF em todos os arquivos texto (SPEC).
+* text=auto eol=lf
+
+# Binários nunca devem ser normalizados.
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.zip binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+
+# Scripts mantêm LF também no Windows (CI roda em ubuntu/windows/macos).
+*.sh text eol=lf

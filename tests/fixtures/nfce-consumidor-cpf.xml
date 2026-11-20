@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+    <infNFe Id="NFe35260413583426535940650210008053261339775770" versao="4.00">
+      <ide>
+        <cUF>35</cUF>
+        <cNF>33977577</cNF>
+        <natOp>VENDA DE MERCADORIA ADQUIRIDA OU RECEBIDA DE TERCEIROS</natOp>
+        <mod>65</mod>
+        <serie>21</serie>
+        <nNF>805326</nNF>
+        <dhEmi>2026-04-11T17:40:00-03:00</dhEmi>
+        <tpNF>1</tpNF>
+        <idDest>1</idDest>
+        <cMunFG>3550308</cMunFG>
+        <tpImp>4</tpImp>
+        <tpEmis>1</tpEmis>
+        <cDV>0</cDV>
+        <tpAmb>1</tpAmb>
+        <finNFe>1</finNFe>
+        <indFinal>1</indFinal>
+        <indPres>1</indPres>
+        <procEmi>0</procEmi>
+        <verProc>danfe-br-fixtures 0.1.0</verProc>
+      </ide>
+      <emit>
+        <CNPJ>13583426535940</CNPJ>
+        <xNome>Mercado Bom Prezzo Ltda ME</xNome>
+        <xFant>Bom Prezzo</xFant>
+        <enderEmit>
+          <xLgr>Rua das Palmeiras</xLgr>
+          <nro>250</nro>
+          <xCpl>Loja 12</xCpl>
+          <xBairro>Jardim Brasil</xBairro>
+          <cMun>3550308</cMun>
+          <xMun>Campinas</xMun>
+          <UF>SP</UF>
+          <CEP>13010001</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>1930000000</fone>
+        </enderEmit>
+        <IE>110042490114</IE>
+        <CRT>1</CRT>
+      </emit>
+      <dest>
+        <CPF>11144477735</CPF>
+        <indIEDest>9</indIEDest>
+      </dest>
+      <det nItem="1">
+        <prod>
+          <cProd>SKU481173</cProd>
+          <cEAN>SEM GTIN</cEAN>
+          <xProd>Produto sintético 7798</xProd>
+          <NCM>32186635</NCM>
+          <CFOP>5102</CFOP>
+          <uCom>UN</uCom>
+          <qCom>2.0000</qCom>
+          <vUnCom>4.5000000000</vUnCom>
+          <vProd>9.00</vProd>
+          <cEANTrib>SEM GTIN</cEANTrib>
+          <uTrib>UN</uTrib>
+          <qTrib>2.0000</qTrib>
+          <vUnTrib>4.5000000000</vUnTrib>
+          <indTot>1</indTot>
+        </prod>
+        <imposto>
+          <vTotTrib>4.45</vTotTrib>
+          <ICMS>
+            <ICMSSN102>
+              <orig>0</orig>
+              <CSOSN>102</CSOSN>
+            </ICMSSN102>
+          </ICMS>
+        </imposto>
+      </det>
+      <det nItem="2">
+        <prod>
+          <cProd>SKU602452</cProd>
+          <cEAN>SEM GTIN</cEAN>
+          <xProd>Produto sintético 4373</xProd>
+          <NCM>51055518</NCM>
+          <CFOP>5102</CFOP>
+          <uCom>UN</uCom>
+          <qCom>1.0000</qCom>
+          <vUnCom>12.9000000000</vUnCom>
+          <vProd>12.90</vProd>
+          <cEANTrib>SEM GTIN</cEANTrib>
+          <uTrib>UN</uTrib>
+          <qTrib>1.0000</qTrib>
+          <vUnTrib>12.9000000000</vUnTrib>
+          <indTot>1</indTot>
+        </prod>
+        <imposto>
+          <vTotTrib>3.85</vTotTrib>
+          <ICMS>
+            <ICMSSN102>
+              <orig>0</orig>
+              <CSOSN>400</CSOSN>
+            </ICMSSN102>
+          </ICMS>
+        </imposto>
+      </det>
+      <total>
+        <ICMSTot>
+          <vBC>0.00</vBC>
+          <vICMS>0.00</vICMS>
+          <vICMSDeson>0.00</vICMSDeson>
+          <vFCP>0.00</vFCP>
+          <vBCST>0.00</vBCST>
+          <vST>0.00</vST>
+          <vFCPST>0.00</vFCPST>
+          <vFCPSTRet>0.00</vFCPSTRet>
+          <vProd>21.90</vProd>
+          <vFrete>0.00</vFrete>
+          <vSeg>0.00</vSeg>
+          <vDesc>0.00</vDesc>
+          <vII>0.00</vII>
+          <vIPI>0.00</vIPI>
+          <vIPIDevol>0.00</vIPIDevol>
+          <vPIS>0.00</vPIS>
+          <vCOFINS>0.00</vCOFINS>
+          <vOutro>0.00</vOutro>
+          <vNF>21.90</vNF>
+          <vTotTrib>8.30</vTotTrib>
+        </ICMSTot>
+      </total>
+      <transp>
+        <modFrete>9</modFrete>
+      </transp>
+      <pag>
+        <detPag>
+          <tPag>03</tPag>
+          <vPag>21.90</vPag>
+          <card>
+            <tpIntegra>1</tpIntegra>
+            <tBand>02</tBand>
+            <cAut>20261120</cAut>
+          </card>
+        </detPag>
+      </pag>
+      <infNFeSupl>
+        <qrCode><![CDATA[https://www.sefaz.rs.gov.br/consulta/NFCe?chNFe=35260413583426535940650210008053261339775770&nVersao=100&tpAmb=1&cDest=11144477735&dhEmi=2026-11-20T10%3A00%3A00-03%3A00&vNF=21.90&vICMS=0.00&digVal=&cIdToken=000001&cHashQRCode=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F8A9B0]]></qrCode>
+        <urlChave>https://www.sefaz.rs.gov.br/consulta/NFCe</urlChave>
+      </infNFeSupl>
+    </infNFe>
+  </NFe>
+  <protNFe versao="4.00">
+    <infProt Id="ID000000622320132">
+      <tpAmb>1</tpAmb>
+      <verAplic>SVRS-2026</verAplic>
+      <chNFe>35260413583426535940650210008053261339775770</chNFe>
+      <dhRecbto>2026-04-11T17:40:00-03:00</dhRecbto>
+      <nProt>000000622320132</nProt>
+      <cStat>100</cStat>
+      <xMotivo>Autorizado o uso da NF-e</xMotivo>
+    </infProt>
+  </protNFe>
+</nfeProc>

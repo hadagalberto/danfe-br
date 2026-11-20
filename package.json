@@ -1,0 +1,79 @@
+{
+  "name": "danfe-br",
+  "version": "0.1.0",
+  "description": "Parser, validador e renderizador de DANFE/DANFE NFC-e para NF-e (modelo 55) e NFC-e (modelo 65) — TypeScript puro, sem dependências nativas.",
+  "keywords": [
+    "nfe",
+    "nf-e",
+    "nfce",
+    "nfc-e",
+    "danfe",
+    "sat",
+    "fiscal",
+    "sefaz",
+    "xml",
+    "pdf"
+  ],
+  "license": "MIT",
+  "author": "Hadagalberto Junior",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hadagalberto/danfe-br"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./fixtures": {
+      "types": "./dist/fixtures/index.d.ts",
+      "import": "./dist/fixtures/index.js",
+      "require": "./dist/fixtures/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "README.md",
+    "README.en.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "fixtures": "tsx scripts/generate-fixtures.ts",
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run build && npm run test"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.2.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.0.0",
+    "prettier": "^3.0.0",
+    "tsx": "^4.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.27.7": true,
+    "esbuild@0.28.2": true
+  }
+}

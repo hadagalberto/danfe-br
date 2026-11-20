@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<procEventoCancNFe versao="1.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <evento versao="1.00">
+    <infEvento Id="ID1101113526091634304748984755072000339553170257678201">
+      <cOrgao>35</cOrgao>
+      <tpAmb>1</tpAmb>
+      <CNPJ>16343047489847</CNPJ>
+      <chNFe>35260916343047489847550720003395531702576782</chNFe>
+      <dhEvento>2026-02-17T10:06:00-03:00</dhEvento>
+      <tpEvento>110111</tpEvento>
+      <nSeqEvento>1</nSeqEvento>
+      <verEvento>1.00</verEvento>
+      <detEvento versao="1.00">
+        <descEvento>Cancelamento</descEvento>
+        <nProt>000000862723424</nProt>
+        <xJust>Erro na emissão: valores divergentes do pedido.</xJust>
+      </detEvento>
+    </infEvento>
+  </evento>
+  <retEvento versao="1.00">
+    <infEvento Id="">
+      <tpAmb>1</tpAmb>
+      <verAplic>SVRS-2026</verAplic>
+      <cOrgao>35</cOrgao>
+      <cStat>101</cStat>
+      <xMotivo>Cancelamento de NF-e homologado</xMotivo>
+      <chNFe>35260916343047489847550720003395531702576782</chNFe>
+      <tpEvento>110111</tpEvento>
+      <xEvento>Cancelamento registrado</xEvento>
+      <nSeqEvento>1</nSeqEvento>
+      <cOrgaoAutor>35</cOrgaoAutor>
+      <dhRegEvento>2026-02-17T10:06:00-03:00</dhRegEvento>
+      <nProt>000000394807345</nProt>
+    </infEvento>
+  </retEvento>
+</procEventoCancNFe>

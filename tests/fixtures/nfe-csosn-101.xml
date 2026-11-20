@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+    <infNFe Id="NFe35261115348653138089550020005709991497405560" versao="4.00">
+      <ide>
+        <cUF>35</cUF>
+        <cNF>49740556</cNF>
+        <natOp>VENDA DE PRODUÇÃO PRÓPRIA</natOp>
+        <mod>55</mod>
+        <serie>2</serie>
+        <nNF>570999</nNF>
+        <dhEmi>2026-11-12T10:29:00-03:00</dhEmi>
+        <tpNF>1</tpNF>
+        <idDest>1</idDest>
+        <cMunFG>3550308</cMunFG>
+        <tpImp>1</tpImp>
+        <tpEmis>1</tpEmis>
+        <cDV>0</cDV>
+        <tpAmb>1</tpAmb>
+        <finNFe>1</finNFe>
+        <indFinal>0</indFinal>
+        <indPres>0</indPres>
+        <procEmi>0</procEmi>
+        <verProc>danfe-br-fixtures 0.1.0</verProc>
+      </ide>
+      <emit>
+        <CNPJ>15348653138089</CNPJ>
+        <xNome>Metalúrgica Ponte Nova Ltda</xNome>
+        <xFant>Metalúrgica</xFant>
+        <enderEmit>
+          <xLgr>Avenida das Indústrias</xLgr>
+          <nro>3792</nro>
+          <xCpl>Galpão 3</xCpl>
+          <xBairro>Distrito Industrial</xBairro>
+          <cMun>3550308</cMun>
+          <xMun>Campinas</xMun>
+          <UF>SP</UF>
+          <CEP>13036245</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>1904749173</fone>
+        </enderEmit>
+        <IE>P335412391299</IE>
+        <CRT>1</CRT>
+      </emit>
+      <dest>
+        <CNPJ>15677989487693</CNPJ>
+        <xNome>Ana Beatriz Nogueira - ME</xNome>
+        <enderDest>
+          <xLgr>Rua XV de Novembro</xLgr>
+          <nro>9366</nro>
+          <xBairro>Centro</xBairro>
+          <cMun>4106902</cMun>
+          <xMun>Curitiba</xMun>
+          <UF>PR</UF>
+          <CEP>80067189</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>4157857237</fone>
+        </enderDest>
+        <indIEDest>1</indIEDest>
+        <IE>990093497</IE>
+        <email>destinatario5551@exemplo.com.br</email>
+      </dest>
+      <det nItem="1">
+        <prod>
+          <cProd>SKU884677</cProd>
+          <cEAN>SEM GTIN</cEAN>
+          <xProd>Produto sintético 2966</xProd>
+          <NCM>38445115</NCM>
+          <CFOP>5102</CFOP>
+          <uCom>UN</uCom>
+          <qCom>15.0000</qCom>
+          <vUnCom>35.1900000000</vUnCom>
+          <vProd>527.85</vProd>
+          <cEANTrib>SEM GTIN</cEANTrib>
+          <uTrib>UN</uTrib>
+          <qTrib>15.0000</qTrib>
+          <vUnTrib>35.1900000000</vUnTrib>
+          <indTot>1</indTot>
+        </prod>
+        <imposto>
+          <vTotTrib>1.06</vTotTrib>
+          <ICMS>
+            <ICMSSN101>
+              <orig>0</orig>
+              <CSOSN>101</CSOSN>
+              <pCredSN>1.25</pCredSN>
+              <vCredICMSSN>12.50</vCredICMSSN>
+            </ICMSSN101>
+          </ICMS>
+          <PIS>
+            <PISAliq>
+              <CST>01</CST>
+              <vBC>0.00</vBC>
+              <pPIS>0.00</pPIS>
+              <vPIS>2.80</vPIS>
+            </PISAliq>
+          </PIS>
+          <COFINS>
+            <COFINSAliq>
+              <CST>01</CST>
+              <vBC>0.00</vBC>
+              <pCOFINS>0.00</pCOFINS>
+              <vCOFINS>1.20</vCOFINS>
+            </COFINSAliq>
+          </COFINS>
+        </imposto>
+      </det>
+      <total>
+        <ICMSTot>
+          <vBC>0.00</vBC>
+          <vICMS>0.00</vICMS>
+          <vICMSDeson>0.00</vICMSDeson>
+          <vFCP>0.00</vFCP>
+          <vBCST>0.00</vBCST>
+          <vST>0.00</vST>
+          <vFCPST>0.00</vFCPST>
+          <vFCPSTRet>0.00</vFCPSTRet>
+          <vProd>527.85</vProd>
+          <vFrete>0.00</vFrete>
+          <vSeg>0.00</vSeg>
+          <vDesc>0.00</vDesc>
+          <vII>0.00</vII>
+          <vIPI>0.00</vIPI>
+          <vIPIDevol>0.00</vIPIDevol>
+          <vPIS>2.80</vPIS>
+          <vCOFINS>1.20</vCOFINS>
+          <vOutro>0.00</vOutro>
+          <vNF>527.85</vNF>
+          <vTotTrib>1.06</vTotTrib>
+        </ICMSTot>
+      </total>
+      <transp>
+        <modFrete>9</modFrete>
+      </transp>
+      <pag>
+        <detPag>
+          <indPag>0</indPag>
+          <tPag>15</tPag>
+          <vPag>527.85</vPag>
+        </detPag>
+      </pag>
+    </infNFe>
+  </NFe>
+  <protNFe versao="4.00">
+    <infProt Id="ID000000116162452">
+      <tpAmb>1</tpAmb>
+      <verAplic>SVRS-2026</verAplic>
+      <chNFe>35261115348653138089550020005709991497405560</chNFe>
+      <dhRecbto>2026-11-12T10:29:00-03:00</dhRecbto>
+      <nProt>000000116162452</nProt>
+      <cStat>100</cStat>
+      <xMotivo>Autorizado o uso da NF-e</xMotivo>
+    </infProt>
+  </protNFe>
+</nfeProc>

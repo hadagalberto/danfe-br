@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+    <infNFe Id="NFe35260313931961018451550380004266271635663681" versao="4.00">
+      <ide>
+        <cUF>35</cUF>
+        <cNF>63566368</cNF>
+        <natOp>VENDA DE PRODUÇÃO PRÓPRIA</natOp>
+        <mod>55</mod>
+        <serie>38</serie>
+        <nNF>426627</nNF>
+        <dhEmi>2026-03-08T13:57:00-03:00</dhEmi>
+        <tpNF>1</tpNF>
+        <idDest>1</idDest>
+        <cMunFG>3550308</cMunFG>
+        <tpImp>1</tpImp>
+        <tpEmis>1</tpEmis>
+        <cDV>1</cDV>
+        <tpAmb>1</tpAmb>
+        <finNFe>1</finNFe>
+        <indFinal>0</indFinal>
+        <indPres>0</indPres>
+        <procEmi>0</procEmi>
+        <verProc>danfe-br-fixtures 0.1.0</verProc>
+      </ide>
+      <emit>
+        <CNPJ>13931961018451</CNPJ>
+        <xNome>Indústria Vale Verde Ltda</xNome>
+        <xFant>Indústria</xFant>
+        <enderEmit>
+          <xLgr>Avenida das Indústrias</xLgr>
+          <nro>7660</nro>
+          <xCpl>Galpão 3</xCpl>
+          <xBairro>Distrito Industrial</xBairro>
+          <cMun>3550308</cMun>
+          <xMun>Campinas</xMun>
+          <UF>SP</UF>
+          <CEP>13083009</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>1946790801</fone>
+        </enderEmit>
+        <IE>P187023882859</IE>
+        <CRT>3</CRT>
+      </emit>
+      <dest>
+        <CNPJ>12366417228845</CNPJ>
+        <xNome>Ana Beatriz Nogueira - ME</xNome>
+        <enderDest>
+          <xLgr>Rua XV de Novembro</xLgr>
+          <nro>6182</nro>
+          <xBairro>Centro</xBairro>
+          <cMun>4106902</cMun>
+          <xMun>Curitiba</xMun>
+          <UF>PR</UF>
+          <CEP>80057257</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>4152367209</fone>
+        </enderDest>
+        <indIEDest>1</indIEDest>
+        <IE>968274437</IE>
+        <email>destinatario6275@exemplo.com.br</email>
+      </dest>
+      <det nItem="1">
+        <prod>
+          <cProd>SKU244473</cProd>
+          <cEAN>SEM GTIN</cEAN>
+          <xProd>Produto sintético 7866</xProd>
+          <NCM>79749103</NCM>
+          <CFOP>5401</CFOP>
+          <uCom>UN</uCom>
+          <qCom>19.0000</qCom>
+          <vUnCom>80.5800000000</vUnCom>
+          <vProd>1531.02</vProd>
+          <cEANTrib>SEM GTIN</cEANTrib>
+          <uTrib>UN</uTrib>
+          <qTrib>19.0000</qTrib>
+          <vUnTrib>80.5800000000</vUnTrib>
+          <indTot>1</indTot>
+        </prod>
+        <imposto>
+          <vTotTrib>4.79</vTotTrib>
+          <ICMS>
+            <ICMS02>
+              <orig>0</orig>
+              <CST>02</CST>
+              <qBCMono>1000.0000</qBCMono>
+              <adRemICMS>1.50</adRemICMS>
+              <vICMSMono>15.00</vICMSMono>
+            </ICMS02>
+          </ICMS>
+          <PIS>
+            <PISAliq>
+              <CST>01</CST>
+              <vBC>0.00</vBC>
+              <pPIS>0.00</pPIS>
+              <vPIS>1.40</vPIS>
+            </PISAliq>
+          </PIS>
+          <COFINS>
+            <COFINSAliq>
+              <CST>01</CST>
+              <vBC>0.00</vBC>
+              <pCOFINS>0.00</pCOFINS>
+              <vCOFINS>0.80</vCOFINS>
+            </COFINSAliq>
+          </COFINS>
+        </imposto>
+      </det>
+      <total>
+        <ICMSTot>
+          <vBC>0.00</vBC>
+          <vICMS>0.00</vICMS>
+          <vICMSDeson>0.00</vICMSDeson>
+          <vFCP>0.00</vFCP>
+          <vBCST>0.00</vBCST>
+          <vST>0.00</vST>
+          <vFCPST>0.00</vFCPST>
+          <vFCPSTRet>0.00</vFCPSTRet>
+          <qBCMono>1000.0000</qBCMono>
+          <vICMSMono>15.00</vICMSMono>
+          <vProd>1531.02</vProd>
+          <vFrete>0.00</vFrete>
+          <vSeg>0.00</vSeg>
+          <vDesc>0.00</vDesc>
+          <vII>0.00</vII>
+          <vIPI>0.00</vIPI>
+          <vIPIDevol>0.00</vIPIDevol>
+          <vPIS>1.40</vPIS>
+          <vCOFINS>0.80</vCOFINS>
+          <vOutro>0.00</vOutro>
+          <vNF>1531.02</vNF>
+          <vTotTrib>4.79</vTotTrib>
+        </ICMSTot>
+      </total>
+      <transp>
+        <modFrete>9</modFrete>
+      </transp>
+      <pag>
+        <detPag>
+          <indPag>0</indPag>
+          <tPag>15</tPag>
+          <vPag>1531.02</vPag>
+        </detPag>
+      </pag>
+    </infNFe>
+  </NFe>
+  <protNFe versao="4.00">
+    <infProt Id="ID000000271723525">
+      <tpAmb>1</tpAmb>
+      <verAplic>SVRS-2026</verAplic>
+      <chNFe>35260313931961018451550380004266271635663681</chNFe>
+      <dhRecbto>2026-03-08T13:57:00-03:00</dhRecbto>
+      <nProt>000000271723525</nProt>
+      <cStat>100</cStat>
+      <xMotivo>Autorizado o uso da NF-e</xMotivo>
+    </infProt>
+  </protNFe>
+</nfeProc>

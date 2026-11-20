@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<procCCeNFe versao="1.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <evento versao="1.00">
+    <infEvento Id="ID1101103526071116893330041255018000355807123103876701">
+      <cOrgao>35</cOrgao>
+      <tpAmb>1</tpAmb>
+      <CNPJ>11168933300412</CNPJ>
+      <chNFe>35260711168933300412550180003558071231038767</chNFe>
+      <dhEvento>2026-04-11T14:04:00-03:00</dhEvento>
+      <tpEvento>110110</tpEvento>
+      <nSeqEvento>1</nSeqEvento>
+      <verEvento>1.00</verEvento>
+      <detEvento versao="1.00">
+        <descEvento>Carta de Correção</descEvento>
+        <xCorrecao>Corrigir razão social do destinatário para &quot;Comercial Horizonte S.A.&quot;.</xCorrecao>
+        <xCondUso>A Carta de Correção é disciplinada pelo § 1º-A do art. 7º do Convênio S/N, de 15 de dezembro de 1970 e pode ser utilizada para regularização de erro ocorrido na emissão de documento fiscal, desde que o erro não esteja relacionado com: I - as variáveis que determinam o valor do imposto tais como: base de cálculo, alíquota, diferença de preço, quantidade, valor da operação ou da prestação; II - a correção de dados cadastrais que implique mudança do remetente ou do destinatário; III - a data de emissão ou de saída.</xCondUso>
+      </detEvento>
+    </infEvento>
+  </evento>
+  <retEvento versao="1.00">
+    <infEvento Id="">
+      <tpAmb>1</tpAmb>
+      <verAplic>SVRS-2026</verAplic>
+      <cOrgao>35</cOrgao>
+      <cStat>135</cStat>
+      <xMotivo>Evento registrado e vinculado a NF-e</xMotivo>
+      <chNFe>35260711168933300412550180003558071231038767</chNFe>
+      <tpEvento>110110</tpEvento>
+      <xEvento>Carta de Correção</xEvento>
+      <nSeqEvento>1</nSeqEvento>
+      <cOrgaoAutor>35</cOrgaoAutor>
+      <dhRegEvento>2026-04-11T14:04:00-03:00</dhRegEvento>
+      <nProt>000000463107121</nProt>
+    </infEvento>
+  </retEvento>
+</procCCeNFe>

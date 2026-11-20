@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+  <NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+    <infNFe Id="NFe35260916070823083401550120006006411161675989" versao="4.00">
+      <ide>
+        <cUF>35</cUF>
+        <cNF>16167598</cNF>
+        <natOp>VENDA DE PRODUÇÃO PRÓPRIA</natOp>
+        <mod>55</mod>
+        <serie>12</serie>
+        <nNF>600641</nNF>
+        <dhEmi>2026-09-06T09:15:00-03:00</dhEmi>
+        <tpNF>1</tpNF>
+        <idDest>1</idDest>
+        <cMunFG>3550308</cMunFG>
+        <tpImp>1</tpImp>
+        <tpEmis>1</tpEmis>
+        <cDV>9</cDV>
+        <tpAmb>1</tpAmb>
+        <finNFe>1</finNFe>
+        <indFinal>0</indFinal>
+        <indPres>0</indPres>
+        <procEmi>0</procEmi>
+        <verProc>danfe-br-fixtures 0.1.0</verProc>
+      </ide>
+      <emit>
+        <CNPJ>16070823083401</CNPJ>
+        <xNome>Metalúrgica Ponte Nova Ltda</xNome>
+        <xFant>Metalúrgica</xFant>
+        <enderEmit>
+          <xLgr>Avenida das Indústrias</xLgr>
+          <nro>7778</nro>
+          <xCpl>Galpão 3</xCpl>
+          <xBairro>Distrito Industrial</xBairro>
+          <cMun>3550308</cMun>
+          <xMun>Campinas</xMun>
+          <UF>SP</UF>
+          <CEP>13060551</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>1982863563</fone>
+        </enderEmit>
+        <IE>P734007688597</IE>
+        <CRT>3</CRT>
+      </emit>
+      <dest>
+        <CNPJ>19094615453025</CNPJ>
+        <xNome>Maria Aparecida Souza - ME</xNome>
+        <enderDest>
+          <xLgr>Rua XV de Novembro</xLgr>
+          <nro>600</nro>
+          <xBairro>Centro</xBairro>
+          <cMun>4106902</cMun>
+          <xMun>Curitiba</xMun>
+          <UF>PR</UF>
+          <CEP>80070623</CEP>
+          <cPais>1058</cPais>
+          <xPais>Brasil</xPais>
+          <fone>4128898035</fone>
+        </enderDest>
+        <indIEDest>1</indIEDest>
+        <IE>956003443</IE>
+        <email>destinatario445@exemplo.com.br</email>
+      </dest>
+      <det nItem="1">
+        <prod>
+          <cProd>SKU409144</cProd>
+          <cEAN>SEM GTIN</cEAN>
+          <xProd>Produto sintético 3289</xProd>
+          <NCM>76538466</NCM>
+          <CFOP>5401</CFOP>
+          <uCom>UN</uCom>
+          <qCom>100.0000</qCom>
+          <vUnCom>5.0000000000</vUnCom>
+          <vProd>500.00</vProd>
+          <cEANTrib>SEM GTIN</cEANTrib>
+          <uTrib>UN</uTrib>
+          <qTrib>100.0000</qTrib>
+          <vUnTrib>5.0000000000</vUnTrib>
+          <indTot>1</indTot>
+        </prod>
+        <imposto>
+          <vTotTrib>3.97</vTotTrib>
+          <ICMS>
+            <ICMS00>
+              <orig>0</orig>
+              <CST>00</CST>
+              <modBC>3</modBC>
+              <vBC>500.00</vBC>
+              <pICMS>18.00</pICMS>
+              <vICMS>90.00</vICMS>
+            </ICMS00>
+          </ICMS>
+        </imposto>
+      </det>
+      <det nItem="2">
+        <prod>
+          <cProd>SKU014747</cProd>
+          <cEAN>SEM GTIN</cEAN>
+          <xProd>Produto sintético 4636</xProd>
+          <NCM>61151461</NCM>
+          <CFOP>5401</CFOP>
+          <uCom>UN</uCom>
+          <qCom>100.0000</qCom>
+          <vUnCom>20.0000000000</vUnCom>
+          <vProd>2000.00</vProd>
+          <cEANTrib>SEM GTIN</cEANTrib>
+          <uTrib>UN</uTrib>
+          <qTrib>100.0000</qTrib>
+          <vUnTrib>20.0000000000</vUnTrib>
+          <indTot>0</indTot>
+        </prod>
+        <imposto>
+          <vTotTrib>4.36</vTotTrib>
+          <ICMS>
+            <ICMS40>
+              <orig>0</orig>
+              <CST>41</CST>
+            </ICMS40>
+          </ICMS>
+          <ISSQN>
+            <vBC>2000.00</vBC>
+            <vAliq>5.00</vAliq>
+            <vISSQN>100.00</vISSQN>
+            <cMunFG>3550308</cMunFG>
+            <cListServ>0107</cListServ>
+            <indISS>1</indISS>
+            <indIncentivo>2</indIncentivo>
+          </ISSQN>
+        </imposto>
+      </det>
+      <total>
+        <ICMSTot>
+          <vBC>500.00</vBC>
+          <vICMS>90.00</vICMS>
+          <vICMSDeson>0.00</vICMSDeson>
+          <vFCP>0.00</vFCP>
+          <vBCST>0.00</vBCST>
+          <vST>0.00</vST>
+          <vFCPST>0.00</vFCPST>
+          <vFCPSTRet>0.00</vFCPSTRet>
+          <vProd>500.00</vProd>
+          <vFrete>0.00</vFrete>
+          <vSeg>0.00</vSeg>
+          <vDesc>0.00</vDesc>
+          <vII>0.00</vII>
+          <vIPI>0.00</vIPI>
+          <vIPIDevol>0.00</vIPIDevol>
+          <vPIS>0.00</vPIS>
+          <vCOFINS>0.00</vCOFINS>
+          <vOutro>0.00</vOutro>
+          <vNF>2500.00</vNF>
+          <vTotTrib>8.33</vTotTrib>
+        </ICMSTot>
+        <ISSQNtot>
+          <vServ>2000.00</vServ>
+          <vBC>2000.00</vBC>
+          <vISS>100.00</vISS>
+          <vPIS>0.00</vPIS>
+          <vCOFINS>0.00</vCOFINS>
+          <dCompet>2026-09-06</dCompet>
+          <cRegTrib>3</cRegTrib>
+        </ISSQNtot>
+      </total>
+      <transp>
+        <modFrete>9</modFrete>
+      </transp>
+      <pag>
+        <detPag>
+          <indPag>0</indPag>
+          <tPag>15</tPag>
+          <vPag>2500.00</vPag>
+        </detPag>
+      </pag>
+    </infNFe>
+  </NFe>
+  <protNFe versao="4.00">
+    <infProt Id="ID000000384465259">
+      <tpAmb>1</tpAmb>
+      <verAplic>SVRS-2026</verAplic>
+      <chNFe>35260916070823083401550120006006411161675989</chNFe>
+      <dhRecbto>2026-09-06T09:15:00-03:00</dhRecbto>
+      <nProt>000000384465259</nProt>
+      <cStat>100</cStat>
+      <xMotivo>Autorizado o uso da NF-e</xMotivo>
+    </infProt>
+  </protNFe>
+</nfeProc>

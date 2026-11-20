@@ -1,1 +1,16 @@
+# Dependências
+node_modules/
+
+# Build e cobertura
+dist/
+coverage/
+
+# Artefatos locais de trabalho (downloads, extrações temporárias)
+.tmp/
+
+# Configuração local do harness de IA
 opencode.json
+
+# Sistema
+.DS_Store
+Thumbs.db
