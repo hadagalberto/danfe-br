@@ -103,7 +103,7 @@ describe('parseNFe — nfeProc com protocolo', () => {
     expect(proc.nfe.pag.detPag).toHaveLength(1);
     expect(proc.nfe.pag.detPag[0]!.vPag).toBe(proc.nfe.total.icmsTot.vNF);
     expect(proc.nfe.autXml).toEqual([]);
-    expect(proc.nfe.infNFeSupl).toBeUndefined();
+    expect(proc.infNFeSupl).toBeUndefined();
   });
 });
 
@@ -163,8 +163,9 @@ describe('parseNFe — grupos específicos do corpus', () => {
     expect(detPag.tPag).toBe('03');
     expect(detPag.card?.tpIntegra).toBe(1);
     expect(detPag.card?.tBand).toBe('02');
-    expect(nfe.infNFeSupl?.qrCode).toContain(`chNFe=${nfe.chave}`);
-    expect(nfe.infNFeSupl?.urlChave).toContain('consulta');
+    // infNFeSupl é irmão do infNFe (nível NFeProc), não do conteúdo do infNFe.
+    expect(proc.infNFeSupl?.qrCode).toContain(`chNFe=${nfe.chave}`);
+    expect(proc.infNFeSupl?.urlChave).toContain('consulta');
   });
 
   it('NFC-e anônima: sem destinatário, PIX (tPag 17)', () => {

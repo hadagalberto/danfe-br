@@ -131,11 +131,11 @@
           <vPag>22.87</vPag>
         </detPag>
       </pag>
-      <infNFeSupl>
-        <qrCode><![CDATA[https://www.sefaz.rs.gov.br/consulta/NFCe?chNFe=35260613583426535940650150009101681979192351&nVersao=100&tpAmb=1&dhEmi=2026-11-20T10%3A00%3A00-03%3A00&vNF=22.87&vICMS=0.00&digVal=&cIdToken=000001&cHashQRCode=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F8A9B0]]></qrCode>
-        <urlChave>https://www.sefaz.rs.gov.br/consulta/NFCe</urlChave>
-      </infNFeSupl>
     </infNFe>
+    <infNFeSupl>
+      <qrCode><![CDATA[https://www.sefaz.rs.gov.br/consulta/NFCe?chNFe=35260613583426535940650150009101681979192351&nVersao=100&tpAmb=1&dhEmi=2026-11-20T10%3A00%3A00-03%3A00&vNF=22.87&vICMS=0.00&digVal=&cIdToken=000001&cHashQRCode=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F8A9B0]]></qrCode>
+      <urlChave>https://www.sefaz.rs.gov.br/consulta/NFCe</urlChave>
+    </infNFeSupl>
   </NFe>
   <protNFe versao="4.00">
     <infProt Id="ID000000727555538">

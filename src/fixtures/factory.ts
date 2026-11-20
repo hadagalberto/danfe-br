@@ -37,6 +37,7 @@ import type {
   Imposto,
   ImpostoDevol,
   InfAdic,
+  InfNFeSupl,
   InfRespTec,
   Issqn,
   NFe,
@@ -511,7 +512,6 @@ export interface OpcoesNFe {
   infAdic?: InfAdic;
   infRespTec?: InfRespTec;
   autXml?: AutXml[];
-  infNFeSupl?: NFe['infNFeSupl'];
   ibscbsSelTot?: IbsCbsSelTot;
   nfRef?: Ide['nfRef'];
   detPag?: DetPag[];
@@ -634,7 +634,6 @@ export function montaNFe(o: OpcoesNFe): NFe {
     infAdic: o.infAdic,
     infRespTec: o.infRespTec,
     autXml: o.autXml ?? [],
-    infNFeSupl: o.infNFeSupl,
   };
 }
 
@@ -654,8 +653,8 @@ export function protNFeSintetico(nfe: NFe, sobre?: Partial<ProtNFe>): ProtNFe {
 }
 
 /** Envolve a nota como `nfeProc` com (ou sem) protocolo. */
-export function montaNFeProc(nfe: NFe, protNFe?: ProtNFe): NFeProc {
-  return { versao: '4.00', nfe, protNFe };
+export function montaNFeProc(nfe: NFe, protNFe?: ProtNFe, infNFeSupl?: InfNFeSupl): NFeProc {
+  return { versao: '4.00', nfe, infNFeSupl, protNFe };
 }
 
 // ---------------------------------------------------------------------------
@@ -667,21 +666,21 @@ export function nfeProcToXml(proc: NFeProc): string {
   const w = new EscritorXml();
   w.prologo();
   w.abre('nfeProc', { versao: '4.00', xmlns: 'http://www.portalfiscal.inf.br/nfe' });
-  serializaNFe(w, proc.nfe);
+  serializaNFe(w, proc.nfe, proc.infNFeSupl);
   if (proc.protNFe) serializaProtNFe(w, proc.protNFe);
   w.fecha('nfeProc');
   return w.construir();
 }
 
 /** Serializa apenas a `NFe` (raiz `NFe`, sem protocolo). */
-export function nfeToXml(nfe: NFe): string {
+export function nfeToXml(nfe: NFe, infNFeSupl?: InfNFeSupl): string {
   const w = new EscritorXml();
   w.prologo();
-  serializaNFe(w, nfe);
+  serializaNFe(w, nfe, infNFeSupl);
   return w.construir();
 }
 
-function serializaNFe(w: EscritorXml, nfe: NFe): void {
+function serializaNFe(w: EscritorXml, nfe: NFe, infNFeSupl?: InfNFeSupl): void {
   w.abre('NFe', { xmlns: 'http://www.portalfiscal.inf.br/nfe' });
   w.abre('infNFe', { Id: `NFe${nfe.chave}`, versao: nfe.versao });
 
@@ -695,14 +694,6 @@ function serializaNFe(w: EscritorXml, nfe: NFe): void {
   serializaPag(w, nfe.pag);
   if (nfe.infAdic) serializaInfAdic(w, nfe.infAdic);
   if (nfe.infRespTec) serializaInfRespTec(w, nfe.infRespTec);
-  if (nfe.infNFeSupl) {
-    w.abre('infNFeSupl');
-    // NFC-e: conteúdo em CDATA, conforme o Manual de Especificações Técnicas
-    // do DANFE NFC-e e QR Code (Portal Nacional da NFC-e).
-    w.cdata('qrCode', nfe.infNFeSupl.qrCode);
-    w.texto('urlChave', nfe.infNFeSupl.urlChave);
-    w.fecha('infNFeSupl');
-  }
   for (const aut of nfe.autXml) {
     w.abre('autXML');
     if (aut.cnpj) w.texto('CNPJ', aut.cnpj);
@@ -710,6 +701,16 @@ function serializaNFe(w: EscritorXml, nfe: NFe): void {
     w.fecha('autXML');
   }
   w.fecha('infNFe');
+  if (infNFeSupl) {
+    w.abre('infNFeSupl');
+    // NFC-e: conteúdo em CDATA, conforme o Manual de Especificações Técnicas
+    // do DANFE NFC-e e QR Code (Portal Nacional da NFC-e). O grupo é irmão do
+    // `infNFe` dentro de `NFe` (leiaute 4.00) — não integra o digest da
+    // assinatura, que cobre apenas o `infNFe`.
+    w.cdata('qrCode', infNFeSupl.qrCode);
+    w.texto('urlChave', infNFeSupl.urlChave);
+    w.fecha('infNFeSupl');
+  }
   w.fecha('NFe');
 }
 

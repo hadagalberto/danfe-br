@@ -1146,7 +1146,6 @@ export interface NFe {
   infAdic?: InfAdic;
   infRespTec?: InfRespTec;
   autXml: AutXml[];
-  infNFeSupl?: InfNFeSupl;
 }
 
 /**
@@ -1172,5 +1171,13 @@ export interface NFeProc {
   /** Atributo `versao` do `nfeProc`. */
   versao: string;
   nfe: NFe;
+  /**
+   * ZX01 — grupo `infNFeSupl` (NFC-e), irmão do `infNFe` dentro de `NFe`
+   * (leiaute 4.00, `leiauteNFe_v4.00.xsd`: `TNFe` = `infNFe` +
+   * `infNFeSupl?` + `Signature?`). Fora do `infNFe`, portanto **não** é
+   * coberto pelo digest da assinatura — emissores reais o incluem após
+   * assinar o `infNFe`, com o `digVal` embutido no QR.
+   */
+  infNFeSupl?: InfNFeSupl;
   protNFe?: ProtNFe;
 }

@@ -617,11 +617,11 @@
         </detPag>
         <vTroco>10.00</vTroco>
       </pag>
-      <infNFeSupl>
-        <qrCode><![CDATA[https://www.sefaz.rs.gov.br/consulta/NFCe?chNFe=35261213583426535940650050006996941724564417&nVersao=100&tpAmb=1&dhEmi=2026-11-20T10%3A00%3A00-03%3A00&vNF=238.70&vICMS=0.00&digVal=&cIdToken=000001&cHashQRCode=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F8A9B0]]></qrCode>
-        <urlChave>https://www.sefaz.rs.gov.br/consulta/NFCe</urlChave>
-      </infNFeSupl>
     </infNFe>
+    <infNFeSupl>
+      <qrCode><![CDATA[https://www.sefaz.rs.gov.br/consulta/NFCe?chNFe=35261213583426535940650050006996941724564417&nVersao=100&tpAmb=1&dhEmi=2026-11-20T10%3A00%3A00-03%3A00&vNF=238.70&vICMS=0.00&digVal=&cIdToken=000001&cHashQRCode=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F8A9B0]]></qrCode>
+      <urlChave>https://www.sefaz.rs.gov.br/consulta/NFCe</urlChave>
+    </infNFeSupl>
   </NFe>
   <protNFe versao="4.00">
     <infProt Id="ID000000110429388">

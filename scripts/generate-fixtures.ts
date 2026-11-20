@@ -1179,11 +1179,10 @@ GERADORES.push(() => {
       },
     ],
   });
-  base.infNFeSupl = {
+  const proc = montaNFeProc(base, protNFeSintetico(base), {
     qrCode: qrCodeNfce(base.chave, vNf, vIcms, dest.cpf),
     urlChave: URL_CONSULTA_NFCE,
-  };
-  const proc = montaNFeProc(base, protNFeSintetico(base));
+  });
   writeFileSync(join(RAIZ_FIXTURES, 'nfce-consumidor-cpf.xml'), nfeProcToXml(proc), 'utf8');
   registrar(
     'nfce-consumidor-cpf.xml',
@@ -1221,11 +1220,10 @@ GERADORES.push(() => {
     ...opts,
     detPag: [{ tPag: '17' as const, vPag: vNf, xPag: 'PIX' }],
   });
-  base.infNFeSupl = {
+  const proc = montaNFeProc(base, protNFeSintetico(base), {
     qrCode: qrCodeNfce(base.chave, vNf, vIcms),
     urlChave: URL_CONSULTA_NFCE,
-  };
-  const proc = montaNFeProc(base, protNFeSintetico(base));
+  });
   writeFileSync(join(RAIZ_FIXTURES, 'nfce-anonima.xml'), nfeProcToXml(proc), 'utf8');
   registrar('nfce-anonima.xml', 'NFC-e sem consumidor identificado, pagamento PIX', {
     chave: proc.nfe.chave,
@@ -1264,11 +1262,10 @@ GERADORES.push(() => {
     detPag: [{ tPag: '01' as const, vPag: pago }],
     vTroco: 10,
   });
-  base.infNFeSupl = {
+  const proc = montaNFeProc(base, protNFeSintetico(base), {
     qrCode: qrCodeNfce(base.chave, vNf, vIcms),
     urlChave: URL_CONSULTA_NFCE,
-  };
-  const proc = montaNFeProc(base, protNFeSintetico(base));
+  });
   writeFileSync(join(RAIZ_FIXTURES, 'nfce-itens-20.xml'), nfeProcToXml(proc), 'utf8');
   registrar('nfce-itens-20.xml', 'NFC-e com 20 itens, pagamento em dinheiro com troco e QR Code', {
     chave: proc.nfe.chave,

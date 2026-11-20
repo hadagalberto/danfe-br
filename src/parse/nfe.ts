@@ -84,6 +84,7 @@ export function parseNFe(xml: string): NFeProc {
     return {
       versao: '4.00',
       nfe: parseInfNFe(requerNode(nfeNode['infNFe'], 'infNFe', 'NFe'), 'NFe'),
+      infNFeSupl: parseSupl(nfeNode['infNFeSupl'], 'NFe'),
       protNFe: undefined,
     };
   }
@@ -95,6 +96,7 @@ function parseNfeProc(proc: XNode): NFeProc {
   const result: NFeProc = {
     versao: attr(proc, 'versao') ?? '4.00',
     nfe: parseInfNFe(requerNode(nfeNode['infNFe'], 'infNFe', 'nfeProc/NFe'), 'nfeProc/NFe'),
+    infNFeSupl: parseSupl(nfeNode['infNFeSupl'], 'nfeProc/NFe'),
     protNFe: undefined,
   };
   const protNode = node(proc['protNFe']);
@@ -134,14 +136,6 @@ function parseInfNFe(infNFe: XNode, contexto: string): NFe {
     parseDet(requerNode(d, 'det', contexto), contexto, i),
   );
 
-  const suplNode = node(infNFe['infNFeSupl']);
-  const infNFeSupl: InfNFeSupl | undefined = suplNode
-    ? {
-        qrCode: requer(txt(suplNode['qrCode']), 'qrCode', `${contexto}/infNFeSupl`),
-        urlChave: requer(txt(suplNode['urlChave']), 'urlChave', `${contexto}/infNFeSupl`),
-      }
-    : undefined;
-
   return {
     versao: attr(infNFe, 'versao') ?? '4.00',
     chave,
@@ -159,8 +153,21 @@ function parseInfNFe(infNFe: XNode, contexto: string): NFe {
       .map((a) => node(a))
       .filter((a): a is XNode => a !== undefined)
       .map((a) => parseAutXml(a)),
-    infNFeSupl,
   };
+}
+
+/**
+ * Grupo `infNFeSupl` (ZX01) — irmão do `infNFe` dentro de `NFe`, presente
+ * apenas na NFC-e com o conteúdo do QR Code (CDATA) e a URL de consulta.
+ */
+function parseSupl(v: unknown, contexto: string): InfNFeSupl | undefined {
+  const suplNode = node(v);
+  return suplNode
+    ? {
+        qrCode: requer(txt(suplNode['qrCode']), 'qrCode', `${contexto}/infNFeSupl`),
+        urlChave: requer(txt(suplNode['urlChave']), 'urlChave', `${contexto}/infNFeSupl`),
+      }
+    : undefined;
 }
 
 /** Aplica `f` quando o valor existe; senão `undefined` (grupos 0-1). */
