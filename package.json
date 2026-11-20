@@ -24,6 +24,9 @@
     "node": ">=20"
   },
   "type": "module",
+  "bin": {
+    "danfe": "./dist/cli.js"
+  },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,6 +45,7 @@
   "files": [
     "dist",
     "schemas",
+    "docs/images",
     "README.md",
     "README.en.md",
     "CHANGELOG.md",
@@ -57,6 +61,7 @@
     "test:watch": "vitest",
     "fixtures": "tsx scripts/generate-fixtures.ts",
     "golden": "tsx scripts/generate-golden.ts",
+    "docs:images": "tsx scripts/generate-readme-images.ts",
     "verify": "npm run typecheck && npm run lint && npm run format:check && npm run build && npm run test"
   },
   "dependencies": {
@@ -71,6 +76,7 @@
     "@zxing/library": "^0.21.3",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.0.0",
+    "happy-dom": "^21.0.4",
     "jsqr": "^1.4.0",
     "pdfjs-dist": "4.10.38",
     "pngjs": "7.0.0",

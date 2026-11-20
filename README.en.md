@@ -10,10 +10,30 @@ auxiliary documents as PDF: **DANFE** (portrait and landscape) and
 **DANFE NFC-e** (80 mm and 58 mm, with the QR Code), plus an **ESC/POS** byte
 stream for thermal printers.
 
-> Status: **Milestones 1–4 complete** — typed model, parser, validation,
+> Status: **Milestones 1–5 complete** — typed model, parser, validation,
 > fixture factory, barcodes (Code 128 / QR Code), XMLDSig verification of
-> `infNFe`, portrait **and landscape DANFE**, NFC-e (80/58 mm), ESC/POS output
-> and event documents (cancellation and correction letter). The CLI is next.
+> `infNFe`, portrait **and landscape DANFE**, NFC-e (80/58 mm), ESC/POS output,
+> event documents (cancellation and correction letter) and the **`danfe` CLI**
+> (single file, batch, `--layout`, `--logo`, `--json`, `--validate`). The ESM
+> build is also smoke-tested in a browser-like context.
+
+## Gallery
+
+Images generated from the visual regression goldens (`npm run docs:images`):
+
+<p align="center">
+  <img src="docs/images/danfe-retrato.png" width="280" alt="Portrait DANFE">
+  <img src="docs/images/danfe-paisagem.png" width="380" alt="Landscape DANFE">
+</p>
+<p align="center"><em>Portrait and landscape DANFE (MOC 7.0 — Anexo II).</em></p>
+
+<p align="center">
+  <img src="docs/images/danfe-nfce-80.png" width="180" alt="80 mm NFC-e DANFE">
+  <img src="docs/images/danfe-nfce-58.png" width="140" alt="58 mm NFC-e DANFE">
+  <img src="docs/images/danfe-homologacao.png" width="180" alt="Homologation DANFE">
+  <img src="docs/images/evento-cancelamento.png" width="180" alt="Cancellation receipt">
+</p>
+<p align="center"><em>80/58 mm NFC-e, homologation watermark and cancellation receipt.</em></p>
 
 ## Install
 
@@ -177,19 +197,52 @@ from the XML `qrCode` field, and the access key in 11 groups of 4 digits.
 ESC/POS command bytes are asserted with exact vectors in the test suite; the
 Epson references are cited in `src/render/escppos.ts`.
 
+### `danfe` CLI (milestone 5)
+
+The package installs the `danfe` binary:
+
+```bash
+danfe nota.xml -o nota.pdf                         # single file
+danfe nota.xml --layout paisagem --logo logo.png -o nota.pdf
+danfe nfce.xml --papel 58 -o cupom.pdf             # NFC-e auto-detected from model 65
+danfe nota.xml --validate                          # validation only; exit 0/1
+danfe notas/ -o pdfs/                              # batch: every .xml in the directory
+danfe nota.xml --json                              # structured report on stdout
+danfe --help
+```
+
+- `--layout` accepts `retrato` (default), `paisagem` and `nfce`; when omitted,
+  model 65 documents are rendered as NFC-e automatically. `--papel` selects
+  80 mm (default) or 58 mm.
+- `--logo` accepts PNG or JPEG (file signature checked).
+- `--json` prints the key, model, number, series, issuer and the full validation
+  result; it can be combined with PDF generation.
+- `--validate` writes no PDF and exits **1** on any validation error (access
+  key digit, CNPJ/CPF, totals, protocol), **0** otherwise. Warnings (e.g.
+  homologation "SEM VALOR FISCAL") do not change the exit code.
+- Exit codes: **0** success, **1** invalid document/processing error,
+  **2** invalid usage (unknown option, `--output` unsuitable for a batch, etc.).
+- Batch mode ignores non-`.xml` files and creates the output directory if
+  needed. Without `-o`, each PDF is written next to its source XML.
+
 ## Development
 
 ```bash
 npm install
 npm run verify     # typecheck + lint + format + build + tests
 npm run fixtures   # regenerate the corpus in tests/fixtures/ (deterministic)
+npm run golden     # regenerate tests/golden/
+npm run docs:images # regenerate docs/images/ from tests/golden/
 ```
 
-Tests run on **vitest** (259 tests), including a committed corpus of 45 XML
+Tests run on **vitest** (277 tests), including a committed corpus of 45 XML
 fixtures in `tests/fixtures/` (one invoice per CST/CSOSN family, 10/60/120
 items, installments, transport, homologation, denied, no-protocol,
 alphanumeric CNPJ, DIFAL, mixed ISSQN, IBS/CBS, three NFC-e's, cancellation
-and correction-letter events).
+and correction-letter events), 15 CLI tests and 3 ESM-build tests in happy-dom.
+The browser test imports the **published ESM bundle** (`dist/index.js`) inside
+happy-dom and validates real rendered PDFs with `pdf-lib`; the CLI suite also
+spawns the actual binary to assert exit codes 0/1/2.
 
 ## Official sources
 

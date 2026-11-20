@@ -5,6 +5,30 @@ e [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+### Adicionado — Marco 5: CLI, smoke test de navegador e documentação
+
+- **Binário `danfe`** (`bin` do pacote, build `dist/cli.js`): `danfe nota.xml -o
+nota.pdf`, lote de diretórios (`danfe notas/ -o pdfs/`, ignorando arquivos
+  não-XML), `--layout retrato|paisagem|nfce` (com detecção automática de NFC-e
+  pelo modelo 65), `--papel 80|58`, `--logo` (PNG/JPEG com assinatura
+  verificada), `--json` (relatório com chave, modelo, emitente e validação) e
+  `--validate`. Códigos de saída: 0 = sucesso, 1 = erro de documento/
+  processamento (inclui erros de `--validate`), 2 = uso inválido. A lógica em
+  `src/cli/index.ts` é pura (E/S injetada, sem `process.exit`); `src/cli/main.ts`
+  é apenas o adaptador do processo.
+- **Smoke test do build ESM no navegador**: `tests/browser-esm.test.ts` roda em
+  `happy-dom`, importa `dist/index.js` e renderiza DANFE retrato e NFC-e 58 mm,
+  validando os bytes com `pdf-lib`. O `globalSetup` do vitest produz o build
+  quando necessário, então `npm test` funciona isoladamente.
+- **Testes da CLI**: 15 testes com vetores válidos (fixtures autorizadas) e
+  inválidos (chave com DV adulterado → `CHAVE_DV`/cStat 253, XML malformado,
+  logotipo inválido), incluindo execução do binário real e verificação dos
+  códigos de saída 0/1/2.
+- **Documentação**: README pt-BR e en com galeria de imagens geradas das
+  rasterizações douradas (`npm run docs:images`, script `scripts/generate-readme-images.ts`),
+  seção completa da CLI e contagem atualizada; CONTRIBUTING com os novos
+  comandos. Imagens versionadas em `docs/images/`.
+
 ### Adicionado — Marco 4: DANFE paisagem, NFC-e, ESC/POS e eventos
 
 - **`renderDanfe(modelo, { layout: 'paisagem' })`** (e o atalho

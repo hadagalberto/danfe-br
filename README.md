@@ -10,11 +10,30 @@ renderiza os documentos auxiliares oficiais em PDF: **DANFE** (retrato e
 paisagem) e **DANFE NFC-e** (80 mm e 58 mm, com QR Code), além de saída
 **ESC/POS** para impressoras térmicas.
 
-> Status: **Marcos 1 a 4 concluídos** — modelo tipado, parser, validação,
+> Status: **Marcos 1 a 5 concluídos** — modelo tipado, parser, validação,
 > fábrica de fixtures, códigos de barras (Code 128 / QR Code), verificação
 > da assinatura XMLDSig do `infNFe`, **DANFE retrato e paisagem**, **DANFE
-> NFC-e 80/58 mm**, **ESC/POS** e composição de eventos (cancelamento e CC-e).
-> A CLI está prevista para o próximo marco.
+> NFC-e 80/58 mm**, **ESC/POS**, composição de eventos (cancelamento e CC-e)
+> e a **CLI `danfe`** (arquivo único, lote, `--layout`, `--logo`, `--json`,
+> `--validate`). O build ESM também é verificado em um contexto de navegador.
+
+## Galeria
+
+Imagens geradas das rasterizações douradas dos testes (`npm run docs:images`):
+
+<p align="center">
+  <img src="docs/images/danfe-retrato.png" width="280" alt="DANFE retrato">
+  <img src="docs/images/danfe-paisagem.png" width="380" alt="DANFE paisagem">
+</p>
+<p align="center"><em>DANFE retrato e paisagem (MOC 7.0 — Anexo II).</em></p>
+
+<p align="center">
+  <img src="docs/images/danfe-nfce-80.png" width="180" alt="DANFE NFC-e 80 mm">
+  <img src="docs/images/danfe-nfce-58.png" width="140" alt="DANFE NFC-e 58 mm">
+  <img src="docs/images/danfe-homologacao.png" width="180" alt="DANFE de homologação">
+  <img src="docs/images/evento-cancelamento.png" width="180" alt="Comprovante de cancelamento">
+</p>
+<p align="center"><em>NFC-e 80/58 mm, marca d'água de homologação e comprovante de cancelamento.</em></p>
 
 ## Instalação
 
@@ -201,6 +220,34 @@ com as URLs de download oficiais citadas em `src/render/nfce-conteudo.ts`. O
 ESC/POS usa os comandos Epson documentados em `src/render/escppos.ts`; a
 sequência de bytes é verificada com vetores exatos nos testes.
 
+### CLI `danfe` (marco 5)
+
+O pacote instala o binário `danfe`:
+
+```bash
+danfe nota.xml -o nota.pdf                         # arquivo único
+danfe nota.xml --layout paisagem --logo logo.png -o nota.pdf
+danfe nfce.xml --papel 58 -o cupom.pdf             # NFC-e detectada pelo modelo 65
+danfe nota.xml --validate                          # só valida; exit 0/1
+danfe notas/ -o pdfs/                              # lote: todos os .xml do diretório
+danfe nota.xml --json                              # relatório estruturado no stdout
+danfe --help
+```
+
+- `--layout` aceita `retrato` (padrão), `paisagem` e `nfce`; sem ele, notas
+  modelo 65 usam NFC-e automaticamente. `--papel` escolhe 80 mm (padrão) ou
+  58 mm.
+- `--logo` aceita PNG ou JPEG (assinatura de arquivo verificada).
+- `--json` imprime chave, modelo, número, série, emitente e o resultado completo
+  da validação; pode ser combinado com a geração do PDF.
+- `--validate` não gera PDF e retorna **1** se houver qualquer erro de
+  validação (DV da chave, CNPJ/CPF, totais, protocolo), **0** caso contrário.
+  Avisos (ex.: homologação "SEM VALOR FISCAL") não alteram o código.
+- Códigos de saída: **0** sucesso, **1** documento/processamento inválido,
+  **2** uso inválido (opção desconhecida, `--output` inadequado para lote etc.).
+- O lote ignora arquivos que não sejam `.xml` e cria o diretório de saída se
+  necessário. Sem `-o`, cada PDF é gravado ao lado do XML de origem.
+
 ### Testes de renderização
 
 ```bash
@@ -209,7 +256,15 @@ npm run golden   # regenera tests/golden/*.png (após mudanças de leiaute)
 
 A suíte rasteriza os PDFs com `pdfjs-dist` + `@napi-rs/canvas` (binários para
 todos os SOs), compara com imagens douradas com tolerância e verifica por
-extração de texto que cada campo cai no seu quadro.
+extração de texto que cada campo cai no seu quadro. `npm run docs:images`
+copia as mesmas rasterizações para `docs/images/` (usadas neste README e no
+README.en.md).
+
+Há ainda um smoke test de navegador: `tests/browser-esm.test.ts` roda com
+`happy-dom`, importa o **build ESM publicado** (`dist/index.js`) e renderiza um
+DANFE e um NFC-e, validando a estrutura do PDF com `pdf-lib`. O binário é
+exercitado por `tests/cli.test.ts`, inclusive com processos reais e códigos de
+saída (0/1/2).
 
 ## Cobertura do modelo tipado
 
@@ -236,12 +291,14 @@ npm install        # dependências
 npm run verify     # typecheck + lint + format + build + testes
 npm run fixtures   # regenera o corpus em tests/fixtures/ (determinístico)
 npm run golden     # regenera as imagens douradas em tests/golden/
+npm run docs:images # regenera docs/images/ a partir de tests/golden/
 ```
 
-- Testes: **vitest** — 259 testes, incluindo o corpus com 45 XMLs em
+- Testes: **vitest** — 277 testes, incluindo o corpus com 45 XMLs em
   `tests/fixtures/` (uma nota por CST/CSOSN, 10/60/120 itens, duplicatas,
   transporte, homologação, denegada, sem protocolo, CNPJ alfanumérico, DIFAL,
-  ISSQN conjugado, IBS/CBS, 3 NFC-e's, cancelamento e CC-e).
+  ISSQN conjugado, IBS/CBS, 3 NFC-e's, cancelamento e CC-e), 15 testes da CLI e
+  3 do build ESM em happy-dom.
 - Finais de linha: **LF** (`.gitattributes`).
 - CI: GitHub Actions em ubuntu/windows/macos × Node 20/22/24.
 
