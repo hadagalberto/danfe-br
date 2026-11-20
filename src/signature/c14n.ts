@@ -81,12 +81,7 @@ function renderizaElemento(
   partes: string[],
   excluirAssinatura: boolean,
 ): void {
-  if (
-    excluirAssinatura &&
-    no.uri === URI_XMLDSIG &&
-    no.local === 'Signature' &&
-    !apice
-  ) {
+  if (excluirAssinatura && no.uri === URI_XMLDSIG && no.local === 'Signature' && !apice) {
     return; // transform enveloped-signature aplicada ao subconjunto
   }
 
@@ -96,7 +91,7 @@ function renderizaElemento(
   for (const { prefixo, uri } of no.declaracoes) escopo.set(prefixo, uri);
 
   partes.push('<', no.qname);
-  partes.push(...declaracoesNamespace(no, escopo, escopoPai, apice));
+  partes.push(...declaracoesNamespace(escopo, escopoPai, apice));
   partes.push(...atributosOrdenados(no, apice));
   partes.push('>');
 
@@ -131,7 +126,6 @@ function renderizaElemento(
  *   canônico (supérfluas são omitidas).
  */
 function declaracoesNamespace(
-  no: NoElemento,
   escopo: Map<string, string>,
   escopoPai: Map<string, string> | undefined,
   apice: boolean,
@@ -150,7 +144,9 @@ function declaracoesNamespace(
     }
     if (!apice && escopoPai?.get(prefixo) === uri) continue; // supérflua (§4.6)
     renderizadas.push(
-      prefixo === '' ? ` xmlns="${escapeAtributo(uri)}"` : ` xmlns:${prefixo}="${escapeAtributo(uri)}"`,
+      prefixo === ''
+        ? ` xmlns="${escapeAtributo(uri)}"`
+        : ` xmlns:${prefixo}="${escapeAtributo(uri)}"`,
     );
   }
   return renderizadas;
@@ -169,7 +165,11 @@ function atributosOrdenados(no: NoElemento, apice: boolean): string[] {
     );
     for (const ancestral of [...cadeiaAncestrais(no)].reverse()) {
       for (const a of ancestral.atributos) {
-        if (a.uri === URI_XML && !locaisXmlProprios.has(a.local) && !lista.some((p) => p.local === a.local && p.uri === URI_XML)) {
+        if (
+          a.uri === URI_XML &&
+          !locaisXmlProprios.has(a.local) &&
+          !lista.some((p) => p.local === a.local && p.uri === URI_XML)
+        ) {
           lista.push(a);
         }
       }

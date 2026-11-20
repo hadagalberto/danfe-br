@@ -24,8 +24,7 @@ export const SHA1_BYTES = 20;
 export function sha1(bytes: Uint8Array): Uint8Array {
   const comprimentoBits = bytes.length * 8;
   // Mensagem estendida: dados || 0x80 || zeros(→56 mod 64) || uint64BE(bits)
-  const total =
-    bytes.length + 1 + ((55 - bytes.length) % 64 + 64) % 64 + 8;
+  const total = bytes.length + 1 + ((((55 - bytes.length) % 64) + 64) % 64) + 8;
   const m = new Uint8Array(total);
   m.set(bytes, 0);
   m[bytes.length] = 0x80;
@@ -101,7 +100,7 @@ export function sha1(bytes: Uint8Array): Uint8Array {
 
 /** Rotação à esquerda de `x` por `n` bits (32 bits). */
 function rotl(x: number, n: number): number {
-  return ((x << n) | (x >>> (32 - n))) | 0;
+  return (x << n) | (x >>> (32 - n)) | 0;
 }
 
 /** Escreve um uint32 big-endian em `bytes` na posição `pos`. */

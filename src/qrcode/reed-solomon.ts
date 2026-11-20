@@ -45,8 +45,9 @@ export function polinomioGerador(n: number): Uint8Array {
   let raiz = 1; // α^i
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
-      coefs[j] = gfMult(coefs[j]!, raiz);
-      if (j + 1 < n) coefs[j] ^= coefs[j + 1]!;
+      let coeficiente = gfMult(coefs[j]!, raiz);
+      if (j + 1 < n) coeficiente ^= coefs[j + 1]!;
+      coefs[j] = coeficiente;
     }
     raiz = gfMult(raiz, 2);
   }
@@ -65,7 +66,9 @@ export function restoReedSolomon(dados: Uint8Array, gerador: Uint8Array): Uint8A
     const fator = byte ^ resto[0]!;
     resto.copyWithin(0, 1);
     resto[n - 1] = 0;
-    for (let i = 0; i < n; i++) resto[i] ^= gfMult(gerador[i]!, fator);
+    for (let i = 0; i < n; i++) {
+      resto[i] = resto[i]! ^ gfMult(gerador[i]!, fator);
+    }
   }
   return resto;
 }

@@ -10,9 +10,9 @@ auxiliary documents as PDF: **DANFE** (portrait and landscape) and
 **DANFE NFC-e** (80 mm and 58 mm, with the QR Code), plus an **ESC/POS** byte
 stream for thermal printers.
 
-> Status: **Milestone 1 complete** — full typed model, parser and validation
-> (access key, CNPJ/CPF, totals and protocol) + fixture factory.
-> PDF/DANFE rendering, QR Code and the CLI arrive in the next milestones.
+> Status: **Milestones 1 and 2 complete** — typed model, parser, validation,
+> fixture factory, barcodes (Code 128 / QR Code) and XMLDSig verification of
+> `infNFe`. PDF/DANFE rendering and the CLI arrive in the next milestones.
 
 ## Install
 
@@ -95,6 +95,45 @@ const xml = nfeProcToXml(montaNFeProc(nfe, protNFeSintetico(nfe)));
 ```
 
 Deterministic: the same `seed` produces identical bytes.
+
+### Barcodes (milestone 2)
+
+```ts
+import { encodeCode128, encodeQrCode } from 'danfe-br';
+
+const barcode = encodeCode128(nfe.chave); // Code 128C with Code B fallback
+barcode.larguras; // bar/space module widths, ready to rasterize
+barcode.larguraModulos; // width excluding the quiet zone
+
+const qr = encodeQrCode(nfceConsultUrl, { nivelCorrecao: 'M' });
+qr.versao; // 1–40 (smallest that fits, chosen automatically)
+qr.mascara; // 0–7, lowest N1–N4 penalty (ISO/IEC 18004)
+qr.modulos; // [y][x] matrix, `true` = dark
+qr.paraSvg(4, 4); // standalone SVG with quiet zone
+```
+
+Both are pure TS with no runtime dependencies. Tests decode the generated
+symbols with independent decoders (`@zxing/library` for Code 128, `jsQR` for
+QR), including all 40 QR versions.
+
+### XMLDSig verification (milestone 2)
+
+```ts
+import { verificaAssinaturaNFe } from 'danfe-br';
+
+const resultado = verificaAssinaturaNFe(xmlAutorizado);
+
+resultado.valido; // DigestValue (C14N + SHA-1) and SignatureValue (RSA-SHA1) match?
+resultado.erros; // failure reasons — never throws on an invalid signature
+resultado.detalhes.digestValido;
+resultado.detalhes.assinaturaValida;
+resultado.detalhes.certificado.bitsModulo; // RSA key extracted from the X.509 cert
+```
+
+NF-e profile: C14N 1.0 without comments, SHA-1, RSA-SHA1 (PKCS#1 v1.5) and the
+X.509 certificate in `KeyInfo/X509Data/X509Certificate`. The ICP-Brasil trust
+chain and certificate validity period are **not** evaluated — only the
+cryptographic integrity of `infNFe`.
 
 ## Development
 

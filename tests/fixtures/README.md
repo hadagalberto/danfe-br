@@ -39,5 +39,7 @@ Observações honestas sobre o que é sintético de propósito neste marco:
   a construção byte a byte do QR (HMAC-SHA1, Manual de Especificações
   Técnicas do DANFE NFC-e e QR Code) pertence ao marco de renderização; o
   parser deste marco apenas lê o campo (CDATA inclusive).
-- Os XMLs não possuem assinatura XMLDSig (a verificação de assinatura é
-  objeto de marco próprio, com C14N e amostras assinadas conhecidas).
+- Os XMLs não possuem assinatura XMLDSig. Os testes de assinatura usam o
+  certificado autoassinado de `signature/` (`cert.pem` + `key.pem`, RSA 2048,
+  gerado com `openssl req -x509`) e montam a assinatura em tempo de teste com
+  `node:crypto` — o XML assinado é sintético e restrito a `tests/`.

@@ -42,7 +42,7 @@ export function decodeBase64(texto: string): Uint8Array {
   if (limpo.length % 4 !== 0) {
     throw new RangeError('Base64: comprimento não é múltiplo de 4.');
   }
-  const padding = /=$/.test(limpo) ? (limpo.endsWith('==') ? 2 : 1) : 0;
+  const padding = limpo.endsWith('=') ? (limpo.endsWith('==') ? 2 : 1) : 0;
   const corpo = limpo.slice(0, limpo.length - padding);
   if (corpo.includes('=')) {
     throw new RangeError('Base64: padding "=" fora do final do valor.');

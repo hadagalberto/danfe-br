@@ -128,7 +128,8 @@ export function encodeQrCode(dados: string | Uint8Array, opcoes?: OpcoesQrCode):
 
   const dadosCodewords = new Uint8Array(bits.length / 8);
   bits.forEach((b, i) => {
-    dadosCodewords[i >>> 3] |= b << (7 - (i & 7));
+    const indice = i >>> 3;
+    dadosCodewords[indice] = (dadosCodewords[indice] ?? 0) | (b << (7 - (i & 7)));
   });
 
   // 3. Reed-Solomon por bloco + entrelaçamento (§8.5–8.6).
@@ -178,11 +179,7 @@ function bit(x: number, i: number): boolean {
  * Reed-Solomon de cada bloco e devolve a sequência entrelaçada
  * (§8.6: interleave dos dados e depois dos EC de todos os blocos).
  */
-function adicionaEcEEntrelaca(
-  dados: Uint8Array,
-  versao: number,
-  nivel: NivelCorrecao,
-): Uint8Array {
+function adicionaEcEEntrelaca(dados: Uint8Array, versao: number, nivel: NivelCorrecao): Uint8Array {
   const i = indiceNivel(nivel);
   const numBlocos = NUMERO_BLOCOS[i]![versao]!;
   const ecPorBloco = CODIGOS_EC_POR_BLOCO[i]![versao]!;
@@ -383,7 +380,9 @@ class MatrizQr {
       }
     }
     if (i !== codewords.length * 8) {
-      throw new RangeError(`Colocação de dados consumiu ${i} bits; esperado ${codewords.length * 8}.`);
+      throw new RangeError(
+        `Colocação de dados consumiu ${i} bits; esperado ${codewords.length * 8}.`,
+      );
     }
   }
 
@@ -431,10 +430,16 @@ class MatrizQr {
    */
   penalidade(): number {
     let total = 0;
-    // N1 e N3 em linhas e colunas.
-    for (let y = 0; y < this.tamanho; y++) total += this.penalidadeLinha(x => this.modulos[y]![x]!);
-    for (let x = 0; x < this.tamanho; x++) total += this.penalidadeLinha(y => this.modulos[y]![x]!);
-    // N2: blocos 2×2 de mesma cor.
+    // N1 e N3 em linhas e colunas — varredura de sequências com histórico
+    // de larguras, equivalente ao algoritmo normativo de contagem de padrões
+    // semelhantes ao de reconhecimento (1:1:3:1:1 com margem clara de 4×n).
+    for (let y = 0; y < this.tamanho; y++) {
+      total += this.penalidadeLinha((i) => this.modulos[y]![i]!);
+    }
+    for (let x = 0; x < this.tamanho; x++) {
+      total += this.penalidadeLinha((i) => this.modulos[i]![x]!);
+    }
+    // N2: blocos 2×2 de mesma cor (3 pontos cada).
     for (let y = 0; y < this.tamanho - 1; y++) {
       for (let x = 0; x < this.tamanho - 1; x++) {
         const cor = this.modulos[y]![x]!;
@@ -447,13 +452,14 @@ class MatrizQr {
         }
       }
     }
-    // N4: 10 × passos de 5% de desvio de 50% de módulos escuros.
+    // N4: menor k ≥ 0 tal que (45−5k)% ≤ escuros/total ≤ (55+5k)% (10×k).
     let escuros = 0;
     for (const linha of this.modulos) {
       for (const m of linha) if (m) escuros++;
     }
-    const percentual = (escuros * 100) / (this.tamanho * this.tamanho);
-    total += Math.floor(Math.abs(percentual - 50) / 5) * 10;
+    const totalModulos = this.tamanho * this.tamanho;
+    const k = Math.ceil(Math.abs(escuros * 20 - totalModulos * 10) / totalModulos) - 1;
+    total += k * 10;
     return total;
   }
 
@@ -461,43 +467,55 @@ class MatrizQr {
   private penalidadeLinha(leitor: (i: number) => boolean): number {
     let total = 0;
     const n = this.tamanho;
-    // N1: sequências de 5+ módulos de mesma cor, qualquer cor.
-    for (let i = 0; i < n; ) {
-      let j = i;
-      const cor = leitor(i);
-      while (j < n && leitor(j) === cor) j++;
-      if (j - i >= 5) total += 3 + (j - i - 5);
-      i = j;
-    }
-    // N3: padrão 1011101 com margem clara ≥ 4 em pelo menos uma borda; fora
-    // do símbolo conta como claro (§8.8.3, penalidade 3).
-    for (let i = 0; i + 7 <= n; i++) {
-      if (
-        leitor(i) &&
-        !leitor(i + 1) &&
-        leitor(i + 2) &&
-        leitor(i + 3) &&
-        leitor(i + 4) &&
-        !leitor(i + 5) &&
-        leitor(i + 6)
-      ) {
-        if (this.margemClara(leitor, i - 1, -1) || this.margemClara(leitor, i + 7, 1)) {
-          total += 40;
-        }
+    let corAtual = false;
+    let comprimento = 0;
+    const historico = [0, 0, 0, 0, 0, 0, 0];
+    for (let i = 0; i < n; i++) {
+      if (leitor(i) === corAtual) {
+        comprimento++;
+        if (comprimento === 5) total += 3;
+        else if (comprimento > 5) total++;
+      } else {
+        this.adicionaHistorico(comprimento, historico, n);
+        if (!corAtual) total += this.contaPadroes(historico) * 40;
+        corAtual = leitor(i);
+        comprimento = 1;
       }
     }
+    total += this.terminaEConta(corAtual, comprimento, historico, n) * 40;
     return total;
   }
 
-  /** 4 módulos claros consecutivos a partir de `inicio`, na direção `passo`. */
-  private margemClara(leitor: (i: number) => boolean, inicio: number, passo: number): boolean {
-    const n = this.tamanho;
-    for (let k = 0; k < 4; k++) {
-      const i = inicio + k * passo;
-      if (i < 0 || i >= n) continue; // fora do símbolo = claro
-      if (leitor(i)) return false;
+  /** Padrões 1:1:3:1:1 com margens claras nas duas bordas (0, 1 ou 2). */
+  private contaPadroes(h: readonly number[]): number {
+    const n = h[1]!;
+    const nucleo = n > 0 && h[2] === n && h[3] === n * 3 && h[4] === n && h[5] === n;
+    return (
+      (nucleo && h[0]! >= n * 4 && h[6]! >= n ? 1 : 0) +
+      (nucleo && h[6]! >= n * 4 && h[0]! >= n ? 1 : 0)
+    );
+  }
+
+  /** Encerra a varredura da linha contando o padrão final (borda clara). */
+  private terminaEConta(
+    corAtual: boolean,
+    comprimento: number,
+    historico: number[],
+    n: number,
+  ): number {
+    if (corAtual) {
+      this.adicionaHistorico(comprimento, historico, n);
+      comprimento = 0;
     }
-    return true;
+    this.adicionaHistorico(comprimento + n, historico, n);
+    return this.contaPadroes(historico);
+  }
+
+  /** Empurra o comprimento da sequência para o histórico (borda clara inicial). */
+  private adicionaHistorico(comprimento: number, historico: number[], n: number): void {
+    const ajustado = historico[0] === 0 ? comprimento + n : comprimento;
+    historico.pop();
+    historico.unshift(ajustado);
   }
 
   /** SVG do símbolo com zona de silêncio (para depuração e documentação). */

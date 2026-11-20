@@ -57,7 +57,7 @@ export interface NoElemento {
   uri: string | undefined;
   atributos: AtributoXml[];
   /** Declarações `xmlns`/`xmlns:p` escritas neste elemento, na ordem original. */
-  declaracoes: ReadonlyArray<{ prefixo: string; uri: string }>;
+  declaracoes: readonly { prefixo: string; uri: string }[];
   filhos: NoXml[];
   pai: NoElemento | undefined;
 }
@@ -203,7 +203,8 @@ class Leitor {
         this.pulaDeclOuComentario();
         continue;
       }
-      const no = this.leElemento(new Escopo(undefined));
+      // O '<' do elemento raiz ja foi consumido por exige('<') acima.
+      const no = this.leElemento(new Escopo(undefined), true);
       if (!raiz) {
         raiz = no;
       } else {
@@ -288,12 +289,12 @@ class Leitor {
     throw new ErroXml('Declaração <!...> desconhecida', inicio);
   }
 
-  private leElemento(escopo: Escopo): NoElemento {
+  private leElemento(escopo: Escopo, aberturaJaConsumida = false): NoElemento {
     const inicio = this.pos;
-    this.exige('<');
+    if (!aberturaJaConsumida) this.exige('<');
     const qname = this.leQName();
     const declaracoes: { prefixo: string; uri: string }[] = [];
-    const atributos: AtributoXml[] = [];
+    const atributos: { qname: string; valor: string }[] = [];
     const escopoLocal = new Escopo(escopo);
 
     while (!this.fim() && this.s[this.pos] !== '>' && !this.s.startsWith('/>', this.pos)) {
@@ -313,19 +314,26 @@ class Leitor {
         declaracoes.push({ prefixo, uri: valor });
         continue;
       }
-      const [prefixo, local] = divideQName(nomeAtributo);
       if (atributos.some((a) => a.qname === nomeAtributo)) {
         throw new ErroXml(`Atributo duplicado: ${nomeAtributo}`, inicio);
       }
-      atributos.push({
-        qname: nomeAtributo,
+      atributos.push({ qname: nomeAtributo, valor });
+    }
+
+    // Namespaces in XML §2: as declarações `xmlns` se aplicam a todo o
+    // elemento, independentemente da ordem em que aparecem na tag. Só
+    // resolvemos os prefixos dos atributos depois de ler todas elas.
+    const atributosResolvidos: AtributoXml[] = atributos.map(({ qname, valor }) => {
+      const [prefixo, local] = divideQName(qname);
+      return {
+        qname,
         prefixo,
         local,
         // Atributos sem prefixo não usam o namespace default (Namespaces §5.2).
         uri: prefixo === '' ? undefined : escopoLocal.resolve(prefixo, inicio),
         valor,
-      });
-    }
+      };
+    });
 
     const [prefixo, local] = divideQName(qname);
     const uri = escopoLocal.resolve(prefixo, inicio);
@@ -339,7 +347,7 @@ class Leitor {
       prefixo,
       local,
       uri,
-      atributos,
+      atributos: atributosResolvidos,
       declaracoes,
       filhos: [],
       pai: this.pilha.length ? this.pilha[this.pilha.length - 1]!.no : undefined,
@@ -379,6 +387,7 @@ class Leitor {
         return;
       }
       if (this.s.startsWith('<!--', this.pos)) {
+        this.pos++; // consome '<'; pulaDeclOuComentario espera '!'
         this.pulaDeclOuComentario();
         continue;
       }
@@ -391,6 +400,7 @@ class Leitor {
         continue;
       }
       if (this.s.startsWith('<?', this.pos)) {
+        this.pos++; // consome '<'; lePi espera '?'
         const pi = this.lePi();
         if (pi) no.filhos.push(pi);
         continue;
@@ -428,7 +438,7 @@ class Leitor {
   private leValorAtributo(): string {
     const aspa = this.s[this.pos];
     if (aspa !== '"' && aspa !== "'") {
-      throw new ErroXml("Valor de atributo deve começar com aspas", this.pos);
+      throw new ErroXml('Valor de atributo deve começar com aspas', this.pos);
     }
     this.pos++;
     let bruto = '';
@@ -443,13 +453,33 @@ class Leitor {
       bruto += c;
       this.pos++;
     }
-    const resolvido = this.resolveEntidades(bruto, this.pos);
     // Normalização de atributo (processador validador, XML 1.0 §3.3.3):
-    // espaços literais (tab/quebra/CR) viram espaço; referências de
-    // caractere permanecem intactas (já resolvidas acima sem colapsar).
-    return resolvido.replace(/[\t\n\r]/g, ' ');
+    // espaços **literais** #x9/#xA/#xD viram espaço, mas referências de
+    // caractere (ex.: `&#xD;`) são anexadas literalmente e NÃO são
+    // normalizadas — a C14N depois as escapa como `&#xD;` (§2.3).
+    return this.resolveAtributo(bruto, this.pos);
   }
 
+  /** Resolve entidades em valor de atributo com normalização XML 1.0 §3.3.3. */
+  private resolveAtributo(bruto: string, posicao: number): string {
+    let saida = '';
+    let i = 0;
+    while (i < bruto.length) {
+      const c = bruto[i]!;
+      if (c === '&') {
+        const fim = bruto.indexOf(';', i);
+        if (fim < 0) throw new ErroXml('Entidade sem ";"', posicao + i);
+        saida += this.entidade(bruto.slice(i + 1, fim), posicao + i);
+        i = fim + 1;
+        continue;
+      }
+      saida += c === '\t' || c === '\n' || c === '\r' ? ' ' : c;
+      i++;
+    }
+    return saida;
+  }
+
+  /** Resolve entidades em conteúdo de texto (sem normalização de atributo). */
   private resolveEntidades(bruto: string, posicao: number): string {
     if (!bruto.includes('&')) return bruto;
     let saida = '';
@@ -463,20 +493,23 @@ class Leitor {
       }
       const fim = bruto.indexOf(';', i);
       if (fim < 0) throw new ErroXml('Entidade sem ";"', posicao + i);
-      const nome = bruto.slice(i + 1, fim);
-      if (nome.startsWith('#x')) {
-        const codigo = parseInt(nome.slice(2), 16);
-        saida += String.fromCodePoint(codigo);
-      } else if (nome.startsWith('#')) {
-        saida += String.fromCodePoint(parseInt(nome.slice(1), 10));
-      } else {
-        const valor = ENTIDADES[nome];
-        if (valor === undefined) throw new ErroXml(`Entidade desconhecida: &${nome};`, posicao + i);
-        saida += valor;
-      }
+      saida += this.entidade(bruto.slice(i + 1, fim), posicao + i);
       i = fim + 1;
     }
     return saida;
+  }
+
+  /** Resolve uma entidade nomeada ou de caractere (`nome` sem `&` e `;`). */
+  private entidade(nome: string, posicao: number): string {
+    if (nome.startsWith('#x')) {
+      return String.fromCodePoint(parseInt(nome.slice(2), 16));
+    }
+    if (nome.startsWith('#')) {
+      return String.fromCodePoint(parseInt(nome.slice(1), 10));
+    }
+    const valor = ENTIDADES[nome];
+    if (valor === undefined) throw new ErroXml(`Entidade desconhecida: &${nome};`, posicao);
+    return valor;
   }
 
   private ateFim(marcador: string, posicao: number): void {

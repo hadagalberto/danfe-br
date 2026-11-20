@@ -10,9 +10,10 @@ renderiza os documentos auxiliares oficiais em PDF: **DANFE** (retrato e
 paisagem) e **DANFE NFC-e** (80 mm e 58 mm, com QR Code), além de saída
 **ESC/POS** para impressoras térmicas.
 
-> Status: **Marco 1 concluído** — modelo tipado completo, parser e validação
-> (chave de acesso, CNPJ/CPF, totais e protocolo) + fábrica de fixtures.
-> A renderização de PDF/DANFE, o QR Code e o CLI chegam nos marcos seguintes.
+> Status: **Marcos 1 e 2 concluídos** — modelo tipado, parser, validação,
+> fábrica de fixtures, códigos de barras (Code 128 / QR Code) e verificação
+> da assinatura XMLDSig do `infNFe`. A renderização de PDF/DANFE e o CLI
+> chegam nos marcos seguintes.
 
 ## Instalação
 
@@ -107,6 +108,45 @@ const xml = nfeProcToXml(montaNFeProc(nfe, protNFeSintetico(nfe)));
 ```
 
 Determinística: a mesma `seed` produz os mesmos bytes.
+
+### Códigos de barras (marco 2)
+
+```ts
+import { encodeCode128, encodeQrCode } from 'danfe-br';
+
+const barcode = encodeCode128(nfe.chave); // Code 128C com fallback em B
+barcode.larguras; // módulos barra/espaço para rasterização
+barcode.larguraModulos; // largura sem zona de silêncio
+
+const qr = encodeQrCode(urlConsultaNfce, { nivelCorrecao: 'M' });
+qr.versao; // 1–40 (automaticamente a menor que caiba)
+qr.mascara; // 0–7, escolhida pela menor penalidade N1–N4 (ISO/IEC 18004)
+qr.modulos; // matriz [y][x], `true` = escuro
+qr.paraSvg(4, 4); // SVG com zona de silêncio
+```
+
+Ambos são puro TS, sem dependências de runtime. Os testes decodificam os
+símbolos gerados com decodificadores independentes (`@zxing/library` para
+Code 128 e `jsQR` para QR), incluindo as 40 versões do QR.
+
+### Verificação da assinatura XMLDSig (marco 2)
+
+```ts
+import { verificaAssinaturaNFe } from 'danfe-br';
+
+const resultado = verificaAssinaturaNFe(xmlAutorizado);
+
+resultado.valido; // DigestValue (C14N + SHA-1) e SignatureValue (RSA-SHA1) conferem?
+resultado.erros; // razões da falha — nunca lança em assinatura inválida
+resultado.detalhes.digestValido;
+resultado.detalhes.assinaturaValida;
+resultado.detalhes.certificado.bitsModulo; // chave RSA extraída do X.509
+```
+
+Perfil NF-e: C14N 1.0 sem comentários, SHA-1, RSA-SHA1 (PKCS#1 v1.5) e
+certificado X.509 em `KeyInfo/X509Data/X509Certificate`. A cadeia ICP-Brasil
+e a validade temporal do certificado **não** são avaliadas — apenas a
+integridade criptográfica do `infNFe`.
 
 ## Cobertura do modelo tipado
 

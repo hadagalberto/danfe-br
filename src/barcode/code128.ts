@@ -280,8 +280,6 @@ function segmenta(texto: string): Segmento[] {
       segmentos.push({ conjunto: 'C', texto: texto.slice(i + 1, j) });
     } else if (qualifica) {
       segmentos.push({ conjunto: 'C', texto: texto.slice(i, j) });
-    } else if (qualifica) {
-      segmentos.push({ conjunto: 'C', texto: texto.slice(i, j) });
     } else {
       // Trecho curto demais para valer a troca: dígitos seguem em Code B.
       segmentos.push({ conjunto: 'B', texto: texto.slice(i, j) });
