@@ -97,3 +97,9 @@ export type {
   NoPi,
   NoXml,
 } from './signature/xml-reader';
+
+// Marco 3 — renderização do DANFE retrato (MOC 7.0 — Anexo II)
+export { renderDanfe } from './render/danfe-retrato';
+export type { OpcoesRenderDanfe } from './render/danfe-retrato';
+export { FONTE_MINIMA, LAYOUT_RETRATO, PAGINA, PT_POR_CM, COLUNAS_PRODUTO } from './render/layout';
+export type { Caixa, ColunaProduto } from './render/layout';

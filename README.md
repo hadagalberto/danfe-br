@@ -10,9 +10,10 @@ renderiza os documentos auxiliares oficiais em PDF: **DANFE** (retrato e
 paisagem) e **DANFE NFC-e** (80 mm e 58 mm, com QR Code), além de saída
 **ESC/POS** para impressoras térmicas.
 
-> Status: **Marcos 1 e 2 concluídos** — modelo tipado, parser, validação,
-> fábrica de fixtures, códigos de barras (Code 128 / QR Code) e verificação
-> da assinatura XMLDSig do `infNFe`. A renderização de PDF/DANFE e o CLI
+> Status: **Marcos 1, 2 e 3 concluídos** — modelo tipado, parser, validação,
+> fábrica de fixtures, códigos de barras (Code 128 / QR Code), verificação
+> da assinatura XMLDSig do `infNFe` e renderização do **DANFE retrato** em PDF
+> conforme o Anexo II do MOC 7.0. DANFE paisagem, NFC-e, ESC/POS e CLI
 > chegam nos marcos seguintes.
 
 ## Instalação
@@ -148,6 +149,40 @@ certificado X.509 em `KeyInfo/X509Data/X509Certificate`. A cadeia ICP-Brasil
 e a validade temporal do certificado **não** são avaliadas — apenas a
 integridade criptográfica do `infNFe`.
 
+### DANFE retrato (marco 3)
+
+```ts
+import { renderDanfe } from 'danfe-br';
+
+const pdf: Uint8Array = await renderDanfe(proc, {
+  logo: logoPngOuJpeg, // opcional (MOC §3.1.3)
+  cancelada: false, // detectado automaticamente pelo evento 110111
+  eventos: [eventoCancelamento], // opcional: procEventoNFe
+});
+```
+
+O PDF é A4 retrato, com canhoto, cabeçalho com chave em Code 128C, todos os
+quadros do Anexo II, tamanhos mínimos de fonte da MOC §3.7, paginação
+automática de produtos com `FOLHA X/Y` nas folhas de continuação, transbordo
+de informações complementares e marcas d'água (homologação → `SEM VALOR
+FISCAL`, `CANCELADA`, `DENEGADA`, `CONTINGÊNCIA`). Posições e regras vêm do
+[MOC 7.00 — Anexo II](https://www.confaz.fazenda.gov.br/legislacao/arquivo-manuais/moc7-anexo-ii-manual-especificacoes-tecnicas-danfe-codigo-barras.pdf),
+citadas nos comentários de `src/render/`. A fonte embutida é a **DANFE Sans**
+(derivada da Liberation Sans, SIL OFL 1.1 — ver `assets/fonts/`). O
+`@pdf-lib/fontkit` é o acompanhante oficial do `pdf-lib` necessário para
+incorporar fontes TrueType; é a única dependência de runtime além do próprio
+`pdf-lib` e do parser XML.
+
+### Testes de renderização
+
+```bash
+npm run golden   # regenera tests/golden/*.png (após mudanças de leiaute)
+```
+
+A suíte rasteriza os PDFs com `pdfjs-dist` + `@napi-rs/canvas` (binários para
+todos os SOs), compara com imagens douradas com tolerância e verifica por
+extração de texto que cada campo cai no seu quadro.
+
 ## Cobertura do modelo tipado
 
 Layout **4.00** conforme os XSDs oficiais (vendados em [`schemas/`](schemas/)):
@@ -172,9 +207,10 @@ Layout **4.00** conforme os XSDs oficiais (vendados em [`schemas/`](schemas/)):
 npm install        # dependências
 npm run verify     # typecheck + lint + format + build + testes
 npm run fixtures   # regenera o corpus em tests/fixtures/ (determinístico)
+npm run golden     # regenera as imagens douradas em tests/golden/
 ```
 
-- Testes: **vitest** — 173 testes, incluindo o corpus com 45 XMLs em
+- Testes: **vitest** — 230 testes, incluindo o corpus com 45 XMLs em
   `tests/fixtures/` (uma nota por CST/CSOSN, 10/60/120 itens, duplicatas,
   transporte, homologação, denegada, sem protocolo, CNPJ alfanumérico, DIFAL,
   ISSQN conjugado, IBS/CBS, 3 NFC-e's, cancelamento e CC-e).

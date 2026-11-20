@@ -5,6 +5,32 @@ e [SemVer](https://semver.org/lang/pt-BR/).
 
 ## [Não publicado]
 
+### Adicionado — Marco 3: renderização do DANFE retrato
+
+- **`renderDanfe(modelo, opcoes?)`**: PDF A4 retrato integralmente baseado no
+  MOC 7.0 — Anexo II (`Manual de Especificações Técnicas do DANFE e Código de
+Barras`, seções 2, 3.1.1, 3.1.2, 3.1.7, 3.1.8, 3.7, 3.8.1, 3.9.2, 3.10.1,
+  3.10.2 e Anexo III.02), com URL oficial citada em `src/render/layout.ts`.
+  Inclui canhoto, cabeçalho com logotipo opcional, Code 128C da chave, todos
+  os quadros, tamanhos mínimos de fonte (§3.7), códigos de barras da chave e
+  dos dados em contingência (36 dígitos, §3.9.2) e máscaras de 11/9 blocos.
+- **Paginação** automática de produtos com folhas de continuação contendo o
+  mínimo exigido pelo FAQ oficial, `FOLHA X/Y` em todas as folhas e destaque
+  divisório entre itens (§3.1.7); transbordo de informações complementares
+  para as folhas seguintes (§3.1.8).
+- **Marcas d'água**: `SEM VALOR FISCAL` (homologação/não autorizado),
+  `CANCELADA` (evento 110111 ou opção explícita), `DENEGADA` (cStat
+  110/301-303) e `CONTINGÊNCIA` (tpEmis ≠ 1), desenhadas atrás do conteúdo.
+- **Fonte OFL embutida**: DANFE Sans (subconjunto renomeado de Liberation
+  Sans 2.1.5, SIL OFL 1.1) em `assets/fonts/` e Base64 em
+  `src/render/font-data.ts` — saída determinística em Node e navegador, sem
+  fontes do sistema. `@pdf-lib/fontkit` é o acompanhante do `pdf-lib` usado
+  para incorporar a fonte.
+- **Testes**: 13 novos testes funcionais (campos por quadro, paginação,
+  marcas d'água, fontes mínimas, logotipo e vetores inválidos) e 5 testes de
+  regressão visual, com rasterização via `pdfjs-dist` + `@napi-rs/canvas`
+  (instalável em todos os SOs) e goldens em `tests/golden/`.
+
 ### Adicionado — Marco 2: códigos de barras e assinatura XMLDSig
 
 - **Code 128** próprio (`encodeCode128`): Code C com fallback em Code B pela

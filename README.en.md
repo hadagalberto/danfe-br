@@ -10,9 +10,10 @@ auxiliary documents as PDF: **DANFE** (portrait and landscape) and
 **DANFE NFC-e** (80 mm and 58 mm, with the QR Code), plus an **ESC/POS** byte
 stream for thermal printers.
 
-> Status: **Milestones 1 and 2 complete** — typed model, parser, validation,
-> fixture factory, barcodes (Code 128 / QR Code) and XMLDSig verification of
-> `infNFe`. PDF/DANFE rendering and the CLI arrive in the next milestones.
+> Status: **Milestones 1, 2 and 3 complete** — typed model, parser, validation,
+> fixture factory, barcodes (Code 128 / QR Code), XMLDSig verification of
+> `infNFe` and **portrait DANFE** PDF rendering per MOC 7.0 Anexo II.
+> Landscape DANFE, NFC-e, ESC/POS and the CLI arrive in later milestones.
 
 ## Install
 
@@ -134,6 +135,26 @@ NF-e profile: C14N 1.0 without comments, SHA-1, RSA-SHA1 (PKCS#1 v1.5) and the
 X.509 certificate in `KeyInfo/X509Data/X509Certificate`. The ICP-Brasil trust
 chain and certificate validity period are **not** evaluated — only the
 cryptographic integrity of `infNFe`.
+
+### Portrait DANFE (milestone 3)
+
+```ts
+import { renderDanfe } from 'danfe-br';
+
+const pdf: Uint8Array = await renderDanfe(proc, {
+  logo: logoPngOrJpeg, // optional (MOC §3.1.3)
+  eventos: [cancellationEvent], // optional — enables the CANCELADA watermark
+});
+```
+
+A4 portrait PDF following MOC 7.00 Anexo II: canhoto, optional logo, Code 128C
+chave barcode, all quadros, minimum font sizes, automatic product pagination
+with `FOLHA X/Y` continuation sheets, additional-information overflow and the
+`SEM VALOR FISCAL` / `CANCELADA` / `DENEGADA` / `CONTINGÊNCIA` watermarks. The
+embedded font is DANFE Sans (subset of Liberation Sans, SIL OFL 1.1 — see
+`assets/fonts/`). Visual regression tests rasterize with `pdfjs-dist` +
+`@napi-rs/canvas` and compare against `tests/golden/`; regenerate with
+`npm run golden`.
 
 ## Development
 

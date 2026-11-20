@@ -3,5 +3,9 @@ coverage
 node_modules
 .tmp
 package-lock.json
+# Arquivo gerado a partir dos TTFs em assets/fonts/ — não reformatar
+src/render/font-data.ts
+# Imagens douradas binárias (PNG) não são formatadas
+tests/golden
 # SPEC do projeto (documento do mantenedor) — não reformatar
 SPEC.md
